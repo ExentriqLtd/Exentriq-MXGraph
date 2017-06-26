@@ -1,0 +1,36 @@
+#uploader {
+  position:relative;
+  overflow:hidden;
+  width:250px;
+  height:280px;
+  background:transparent;
+  border:2px dashed #e8e8e8;
+  cursor:pointer;
+  color:#555;
+  font-weight:bold;
+  text-align: center;
+}
+
+#uploader:hover{color:#999;}
+
+#filePhoto{
+    margin-top:10px;
+    margin-bottom:10px;
+    display:block;
+}
+
+#uploader img{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:-1px;
+  left:-1px;
+  z-index:-1;
+  border:none;
+  background-color: #eee;
+}
+
+#wait-message{
+  text-align:center;
+  font-size:1.4em;
+}

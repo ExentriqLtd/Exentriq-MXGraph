@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+.DS_Store
+*.bak
+.deploy
+.deploy/*
+### Meteor template
+.meteor/local
+.meteor/meteorite
+.meteor/dev_bundle
+versions

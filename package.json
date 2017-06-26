@@ -1,5 +1,5 @@
 {
-  "name": "Exentriq-mxgraph",
+  "name": "Exentriq-MXGraph",
   "private": true,
   "scripts": {
     "start": "meteor run"

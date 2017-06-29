@@ -886,16 +886,18 @@ EditorUi = function(editor, container, lightbox)
 	this.editor.resetGraph();
 	this.init();
 
-	// Load a graph from MongoDB
-	var xml = Grapho.findOne({id:Router.current().params.query.id});
+	// Load a graph from FSCollections
+	xml = new FS.File();
+	xml = MXGImages.findOne({_id: Router.current().params.query.id});
 	if(xml){
-		var doc = mxUtils.parseXml(xml.xml);
-		var model = new mxg.mxGraphModel();
-		var codec = new mxg.mxCodec(doc);
-		codec.decode(doc.documentElement, model);
-
-		var children = model.getChildren(model.getChildAt(model.getRoot(), 0));
-		this.editor.graph.setSelectionCells(editor.graph.importCells(children));
+		this.editor.graph.model.beginUpdate();
+		try{
+			this.editor.setGraphXml(mxUtils.parseXml(xml.xml).documentElement);
+		} catch(e){
+			mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
+		} finally {
+			this.editor.graph.model.endUpdate();
+		}
 	}
 	this.editor.setModified(false);
 
@@ -3255,7 +3257,7 @@ EditorUi.prototype.save = function(name)
 			{
 				if (xml.length < MAX_REQUEST_SIZE)
 				{
-					console.log("name="+name+'\n'+xml);
+					//console.log("name="+name+'\n'+xml);
 //					new mxg.mxXmlRequest(SAVE_URL, 'filename=' + encodeURIComponent(name) +
 //						'&xml=' + encodeURIComponent(xml)).simulate(document, '_blank');
 				}

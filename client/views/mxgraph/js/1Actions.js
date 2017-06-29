@@ -65,25 +65,14 @@ Actions.prototype.init = function()
 
 //this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
 	this.addAction('save', function() {
-/*
-			var divOverlay = document.createElement('div')
-			divOverlay.className = "overlay";
-			divOverlay.style.width = "100%";
-			divOverlay.style.opacity = 0.8;
-			var divContent = document.createElement('div')
-			divContent.className = "overlay-content"
-			divContent.innerHTML = "<p>Saving...</p>"
-			divOverlay.appendChild(divContent);
-			document.body.appendChild(divOverlay);
-*/
 			var dlg = new waitDialog(ui);
-			ui.showDialog(dlg.container, 250, 50, true, true);
+			ui.showDialog(dlg.container, 250, 50, true, false);
 			Meteor.setTimeout(
 				function(){
 						savemxGraph();
 			},1000);
 
-//		ui.editor.filename = 'DRAW_'+Router.current().params.query.id;
+			ui.editor.filename = Router.current().params.query.id+'.png';
 //		ui.saveFile(true);
 	}, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
 
@@ -116,7 +105,6 @@ Actions.prototype.init = function()
 		var xmlData = mxUtils.getXml(ui.editor.getGraphXml());
 		var graph = ui.editor.graph;
 		var bg = graph.background;
-		//console.log("BG="+xmlData);
 	  if (bg == null || bg == mxConstants.NONE){
 			bg = '#ffffff';
 		}
@@ -154,8 +142,9 @@ Actions.prototype.init = function()
 				return Meteor.call('mxgSaveXML',idgraph,xmlData,xmlSvg,buffer,function (err, id) {
 					if (!err) {
 						ui.editor.setStatus(mxResources.get('saved') + ' ' + new Date());
+						ui.editor.setModified(false);
 //					ui.editor.graph.startEditing();
-						console.log("CANVAS SAVED!!");
+						console.log("IMAGE SAVED!!");
 						ui.hideDialog();
 					}
 					return xmlData;

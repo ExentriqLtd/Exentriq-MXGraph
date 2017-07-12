@@ -33,7 +33,7 @@ noDrawDialog = function(editorUi,message)
 
 confirmExitEditor = function(ui){
 	var container = document.createElement('div');
-
+	//console.log(ui.editor.modified);
 	var div = document.createElement('div');
 	div.setAttribute('align', 'center');
 	var h2 = document.createElement('h2');
@@ -50,11 +50,11 @@ confirmExitEditor = function(ui){
 	cancelBtn.className = 'geBtn';
 
 	var okBtn = mxUtils.button(mxResources.get('ok'), function() {
-		ui.hideDialog();
-
 		// if parent window remove dialog with iframe with a postmessage
-		if(!(window.location != window.parent.location))
-			window.parent.postMessage("Close.Iframe","*");
+		//if(!(window.location != window.parent.location))
+		
+		window.parent.postMessage("Close.Iframe","*");
+		ui.hideDialog();
 	});
 	okBtn.className = 'geBtn gePrimaryBtn';
 

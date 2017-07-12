@@ -1,8 +1,21 @@
-Template.mxPreview.onCreated(function(){
-    idgraph = Router.current().params.query.id;
-    xml = Grapho.findOne({id:idgraph});
+Template.mxPreview.helpers({
+  images: function () {
+    return MXGImages.find({_id:Router.current().params.query.id}); // Where Images is an FS.Collection instance
+//    return MXGImages.find({_id:Router.current().params.id}); // Where Images is an FS.Collection instance
+  }
+});
 
-    if( !xml ){
+Template.mxPreview.onCreated(function(){
+  return;
+    idgraph = Router.current().params.query.id;
+    //var xml = MXGImages.findOne({_id: idgraph});
+    var fileObj = new FS.File();
+    fileObj = MXGImages.findOne({_id: idgraph});
+    //console.log(fileObj);
+
+    //xml = Grapho.findOne({id:idgraph});
+return;
+    if( !fileObj ){
       var div = document.createElement('div');
       div.setAttribute('align', 'center');
       var h2 = document.createElement('h2');
@@ -17,7 +30,7 @@ Template.mxPreview.onCreated(function(){
       mxUtils.write(div, 'Powered by mxGraph ' + mxClient.VERSION);
       mxUtils.br(div);
       var link = document.createElement('a');
-      link.setAttribute('href', 'http://www.jgraph.com/');
+      link.setAttribute('href', 'http://www.mxgraph.com/');
       link.setAttribute('target', '_blank');
       mxUtils.write(link, 'www.jgraph.com');
       div.appendChild(link);
@@ -57,7 +70,6 @@ Template.mxPreview.onCreated(function(){
       img = document.createElement('img');
       img.src = canvas.toDataURL("image/png");
       document.body.appendChild(img);
-
     };
 
     function parseImages() {
@@ -181,8 +193,5 @@ Template.mxPreview.onCreated(function(){
 
     // lauch parse
     parseImages();
-
-
-
 
 }); // end Template

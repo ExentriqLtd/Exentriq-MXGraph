@@ -1,8 +1,8 @@
 mxBasePath  = 'grapheditor';
 mxLanguage  = 'en'
 mxg = require("mxgraph")({
-//  mxImageBasePath   : "/grapheditor/www/images",
-//  mxBasePath        : "/grapheditor/www",
+  mxImageBasePath   : "grapheditor/images",
+  mxBasePath        : "/grapheditor"
 //  mxLoadStylesheets : false
 });
 

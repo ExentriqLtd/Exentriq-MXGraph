@@ -4,9 +4,26 @@
 </template>
 
 <template name="mxPreview">
-
+  <div class="imageView">
+    {{#each images}}
+      <div>
+        <a href="{{this.url}}" target="_blank"><img src="{{this.url}}" alt="" class="thumbnail" /></a>
+      </div>
+    {{/each}}
+  </div>
 </template>
 
 <template name="exportGraph">
 
+</template>
+
+<template name="notFoundTemplate">
+  <div class="geDialog" style="width: 320px; height: 280px; left: 489px; top: 135px; z-index: 10005;">
+    <div align="center"><h2>DRAW NOT PERMITTED</h2>
+      <img width="151" src="/grapheditor/images/logo.png" style="border: 0px;">
+      <br>Powered by mxGraph 3.7.1<br>
+      <a href="http://www.mxgraph.com/" target="_blank">www.mxgraph.com</a>
+      <br><br>
+    </div>
+  </div>
 </template>

@@ -17,7 +17,7 @@
     "grunt-webpack": "^2.0.1",
     "load-grunt-parent-tasks": "^0.1.1",
     "load-grunt-tasks": "^3.5.2",
-    "mxgraph": "^3.7.1",
+    "mxgraph": "3.7.1",
     "webpack": "^2.3.3"
   }
 }

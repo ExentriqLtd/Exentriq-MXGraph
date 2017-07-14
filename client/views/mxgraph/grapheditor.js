@@ -1,5 +1,3 @@
-Meteor.subscribe('mxgSearch');
-
 Template.mxGraphEditor.onCreated(function(){
 
 });
@@ -64,8 +62,8 @@ Template.mxGraphEditor.onRendered(function(){
       mxResources.loadDefaultBundle = true;
       var bundle = mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
         mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage);
-      console.log("bundle="+mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage));
-      console.log("STYLE_PATH="+STYLE_PATH);
+      //console.log("bundle="+mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage));
+      //console.log("STYLE_PATH="+STYLE_PATH);
 
       // Fixes possible asynchronous requests
       mxUtils.getAll([bundle, STYLE_PATH + '/default.xml'], function(xhr)
@@ -96,9 +94,11 @@ Template.mxGraphEditor.events({
 });
 
 Template.mxGraphEditor.helpers({
+/*
    'xmlGraph' : () =>{
       return Grapho.find({'id':Session.get('id')}).fetch() || {id:0,xml:''};
   }
+*/
 });
 
 Template.mxGraphEditor.rendered = function(){

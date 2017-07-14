@@ -1,4 +1,4 @@
-# EMA: Estimation Management and Accounting system for Exentriq
+# MXGRAPH: Draw graphs
 
 Implements on Exentriq features to deliver project management features to all exentriq Users.
 

@@ -1,1 +1,1 @@
-Grapho  = new Meteor.Collection('mxgraph');
+//Grapho  = new Meteor.Collection('mxgraph');

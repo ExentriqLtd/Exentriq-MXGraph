@@ -4414,10 +4414,9 @@ DiagramFormatPanel.prototype.addView = function(div)
 				var reader = new FileReader();
 				reader.onload = function (event) {
 					imageFile.src = event.target.result;
-					newBackgroundImage = imageFile;
+					var newBackgroundImage = new mxImage(imageFile.src,imageFile.width,imageFile.height);
 					if (graph.backgroundImage !== newBackgroundImage)	{
 						ui.setBackgroundImage(newBackgroundImage);
-
 					}
 				};
 				if(evt.target.files[0])
@@ -4429,8 +4428,8 @@ DiagramFormatPanel.prototype.addView = function(div)
 
 			var btn = mxUtils.button(mxResources.get('image'), function(evt)
 			{
-				$('#upload').click();
-				//ui.showBackgroundImageDialog();
+				//$('#upload').click();
+				ui.showBackgroundImageDialog();
 				mxEvent.consume(evt);
 			});
 

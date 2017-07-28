@@ -15,6 +15,7 @@ Meteor.methods({
     var fileObj = new FS.File();
     fileObj._id = idgraph;
     fileObj.xml = xmldata;
+    fileObj.backgroundImage = svg;
     //console.log("XML="+xmldata);
     fileObj.attachData(imageBuffer, {type: 'image/png'}, function(error){
         if(error) throw error;

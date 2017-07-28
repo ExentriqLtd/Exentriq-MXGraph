@@ -631,12 +631,9 @@ PageSetupDialog = function(editorUi)
 			changeImageLink.innerHTML = newBackgroundImage.src.substring(0, 42) + '...';
 		}
 	};
-
 	mxEvent.addListener(changeImageLink, 'click', function(evt)
 	{
-		BackgroundImageDialog(editorUi,applyFn);
-		return;
-		
+		// dialog backGroundImage
 		editorUi.showBackgroundImageDialog(function(image)
 		{
 			newBackgroundImage = image;

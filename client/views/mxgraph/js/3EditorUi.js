@@ -890,6 +890,11 @@ EditorUi = function(editor, container, lightbox)
 	xml = new FS.File();
 	xml = MXGImages.findOne({_id: Router.current().params.query.id});
 	if(xml){
+		var image = null;
+		if(xml.backgroundImage){
+			image = new mxg.mxImage(xml.backgroundImage.src,xml.backgroundImage.w,xml.backgroundImage.h);
+		}
+		
 		this.editor.graph.model.beginUpdate();
 		try{
 			this.editor.setGraphXml(mxUtils.parseXml(xml.xml).documentElement);
@@ -897,10 +902,13 @@ EditorUi = function(editor, container, lightbox)
 			mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
 		} finally {
 			this.editor.graph.model.endUpdate();
+			this.setBackgroundImage(image);
 		}
-	}
-	this.editor.setModified(false);
 
+
+	}
+
+	this.editor.setModified(false);
 	this.open();
 };
 
@@ -1020,7 +1028,7 @@ EditorUi.prototype.init = function()
 	// Updates action states
 	this.addUndoListener();
 	this.addBeforeUnloadListener();
-	window.onbeforeunload = null;
+	//window.onbeforeunload = null;
 
 	graph.getSelectionModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
 	{
@@ -3383,6 +3391,19 @@ EditorUi.prototype.showBackgroundImageDialog = function(apply)
 	{
 		this.setBackgroundImage(image);
 	});
+	var dlg = new BackgroundImageDialog(this, mxUtils.bind(this, function(image)
+	{
+		apply(image);
+	}));
+	this.showDialog(dlg.container, 360, 200, true, true);
+	dlg.init();
+	return;
+
+
+	apply = (apply != null) ? apply : mxUtils.bind(this, function(image)
+	{
+		this.setBackgroundImage(image);
+	});
 
 	var newValue = mxUtils.prompt(mxResources.get('backgroundImage'), '');
 	if (newValue != null && newValue.length > 0) {
@@ -3921,4 +3942,38 @@ EditorUi.prototype.destroy = function()
 			c[i].parentNode.removeChild(c[i]);
 		}
 	}
+};
+/////////////////////////////////////
+/**
+	 * Defines the maximum size for images.
+*/
+EditorUi.prototype.maxBackgroundSize = 1600;
+
+/**
+ * Defines the maximum size for images.
+ */
+EditorUi.prototype.maxImageSize = 520;
+
+/**
+ * Images above 200K should be resampled.
+ */
+EditorUi.prototype.resampleThreshold = 200000;
+
+/**
+ * Maximum allowed size for images is 2 MB.
+ */
+EditorUi.prototype.maxImageBytes = 2000000;
+
+/**
+ * Maximum size for background images is 3.5 MB.
+ */
+EditorUi.prototype.maxBackgroundBytes = 3500000;
+/**
+	* Display Message on screen
+	*/
+EditorUi.prototype.showError = function(title, msg, btn, fn)
+{
+	var dlg = new ErrorDialog(this, title, msg, btn, fn);
+	this.showDialog(dlg.container, 340, 150, true, false);
+	dlg.init();
 };

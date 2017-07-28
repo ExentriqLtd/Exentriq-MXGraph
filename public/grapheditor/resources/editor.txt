@@ -4,3 +4,7 @@ outline=Outline
 tasks=Tasks
 help=Help
 exit=Exit
+imageTooBig=Image too big
+dragImagesHere=Drag image here
+saving=Saving...
+loading=Loading...

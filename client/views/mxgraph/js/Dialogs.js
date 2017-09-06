@@ -421,7 +421,7 @@ ColorDialog.prototype.createApplyFunction = function()
 		try
 		{
 			graph.setCellStyles(this.currentColorKey, color);
-			this.editorUi.fireEvent(new mxg.mxg.mxEventObject('styleChanged', 'keys', [this.currentColorKey],
+			this.editorUi.fireEvent(new mxg.mxEventObject('styleChanged', 'keys', [this.currentColorKey],
 				'values', [color], 'cells', graph.getSelectionCells()));
 		}
 		finally

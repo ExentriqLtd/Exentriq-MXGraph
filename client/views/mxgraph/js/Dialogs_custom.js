@@ -53,12 +53,21 @@ confirmExitEditor = function(ui){
 		// if parent window remove dialog with iframe with a postmessage
 		//if(!(window.location != window.parent.location))
 
-		window.parent.postMessage("Close.Iframe","*");
+		savemxGraph();
+		//window.parent.postMessage("Close.Iframe","*");
 		ui.hideDialog();
 	});
 	okBtn.className = 'geBtn gePrimaryBtn';
 
+	var saveBtn = mxUtils.button(mxResources.get('exit'), function() {
+		savemxGraph();
+		//window.parent.postMessage("Close.Iframe","*");
+		ui.hideDialog();
+	});
+	saveBtn.className = 'geBtn';
+
 	divFooter.appendChild(cancelBtn);
+	divFooter.appendChild(saveBtn);
 	divFooter.appendChild(okBtn);
 	divFooter.style.position = 'absolute';
 	divFooter.style.bottom = '15px';
@@ -78,7 +87,10 @@ waitDialog = function(ui,msg) {
 	var container = document.createElement('div');
 	container.id = 'wait-message';
 	container.innerHTML = msg;
-
+	var dataLoader = document.createElement('div');
+	dataLoader.className ='eq-ui-loader-line';
+	dataLoader.style.marginTop = '10px';
+	container.appendChild(dataLoader);
 	this.init = function()	{
 
 	};

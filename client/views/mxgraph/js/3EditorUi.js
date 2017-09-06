@@ -894,7 +894,7 @@ EditorUi = function(editor, container, lightbox)
 		if(xml.backgroundImage){
 			image = new mxg.mxImage(xml.backgroundImage.src,xml.backgroundImage.w,xml.backgroundImage.h);
 		}
-		
+
 		this.editor.graph.model.beginUpdate();
 		try{
 			this.editor.setGraphXml(mxUtils.parseXml(xml.xml).documentElement);
@@ -910,6 +910,27 @@ EditorUi = function(editor, container, lightbox)
 
 	this.editor.setModified(false);
 	this.open();
+
+	// add exit button on top-menu
+	if(this.menubar){
+		//console.log("load exit button");
+		var geExit = document.createElement('a');
+		geExit.className = 'geItem geExit';
+		geExit.style.float = 'right';
+		geExit.style.marginRight = '14px';
+		geExit.style.zIndex = '1';
+		var imgExit = document.createElement('img');
+		imgExit.style.border = '0';
+		imgExit.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJAQMAAADaX5RTAAAABlBMVEV7mr3///+wksspAAAAAnRSTlP/AOW3MEoAAAAdSURBVAgdY9jXwCDDwNDRwHCwgeExmASygSL7GgB12QiqNHZZIwAAAABJRU5ErkJggg==';
+		imgExit.title = 'Exit & Save';
+		geExit.appendChild(imgExit);
+		this.menubar.container.appendChild(geExit);
+		mxEvent.addListener(geExit,'click',function(){
+//			savemxGraph();
+			saveAction();
+		});
+	}
+
 };
 
 // Extends mxEventSource
@@ -1028,7 +1049,7 @@ EditorUi.prototype.init = function()
 	// Updates action states
 	this.addUndoListener();
 	this.addBeforeUnloadListener();
-	//window.onbeforeunload = null;
+	window.onbeforeunload = null;
 
 	graph.getSelectionModel().addListener(mxEvent.CHANGE, mxUtils.bind(this, function()
 	{

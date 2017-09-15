@@ -30,6 +30,6 @@ kadira:flow-router
 kadira:blaze-layout
 exentriq:sso
 jquery
+tap:i18n@1.8.2
 underscore@1.0.10
-tap:i18n
-underscorestring:underscore.string
+underscorestring:underscore.string@3.3.4

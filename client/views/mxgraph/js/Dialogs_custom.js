@@ -108,18 +108,18 @@ ImageImportDialog = function(editorUi) {
 	var divUpload = document.createElement('div');
 	divUpload.id = 'uploader';
 	var p = document.createElement('p');
-	p.text = 'Drag here your images for preview';
+	p.innerHTML = 'Drag here your images..';
 	divUpload.appendChild(p);
 
-	var imgPreview = document.createElement('img');
-	divUpload.appendChild(imgPreview);
-	divUpload.addEventListener('click',handleImage);
+	//var img = document.createElement('img');
+	//divUpload.appendChild(img);
+	//divUpload.addEventListener('click',handleImage);
 
 	var imageLoader = document.createElement('input');
 	imageLoader.type = 'file';
 	imageLoader.name = 'userprofile_picture'
 	imageLoader.id = 'filePhoto';
-//	imageLoader.setAttribute('multiple','multiple');
+	imageLoader.setAttribute('multiple','multiple');
 	imageLoader.addEventListener('change', handleImage, false);
 
 	div.appendChild(divUpload);
@@ -129,29 +129,84 @@ ImageImportDialog = function(editorUi) {
 
 	};
 
+	var offsetPoint = 0;
+	function handleFiles(files){
+    for (var i = 0; i < files.length; i++) {
+
+      // get the next file that the user selected
+      var file = files[i];
+      var imageType = /image.*/;
+
+      // don't try to process non-images
+      if (!file.type.match(imageType)) {
+        continue;
+      }
+
+      // a seed img element for the FileReader
+      var img = document.createElement("img");
+      img.classList.add("obj");
+      img.file = file;
+
+      // get an image file from the user
+      // this uses drag/drop, but you could substitute file-browsing
+
+      var reader = new FileReader();
+      reader.onload = (function(aImg) {
+        return function(e) {
+          aImg.onload = function() {
+						var canvas = document.createElement("canvas");
+						if(aImg.height > MAX_HEIGHT) {
+							aImg.width *= MAX_HEIGHT / aImg.height;
+							aImg.height = MAX_HEIGHT;
+						}
+
+            // draw the aImg onto the canvas
+            var ctx = canvas.getContext("2d");
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = aImg.width;
+            canvas.height = aImg.height;
+						ctx.drawImage(aImg, 0, 0, aImg.width, aImg.height);
+            //ctx.drawImage(aImg, 0, 0);
+
+            // make the jpeg image
+            var newImg = new Image();
+            newImg.onload = function() {
+              newImg.id = "newest";
+              //document.body.appendChild(newImg);
+							insertImage(newImg);
+            }
+            newImg.src = canvas.toDataURL('image/jpeg');
+          }
+          aImg.src = e.target.result;
+        };
+      })(img);
+      reader.readAsDataURL(file);
+    } // end for
+		editorUi.hideDialog();
+	}
+
 	function handleImage(e) {
-		var file = e.target.files[0];
-		var reader = new FileReader();
-  	reader.onload = function (event) {
-			var data = event.target.result;
-			imgPreview.src = data ;
-			p.style.display = 'none';
-  	};
-  	if(file)
-			reader.readAsDataURL(file);
+		var files = this.files
+  	handleFiles(files);
 	};
 
   imageLoader.addEventListener('change', handleImage, false);
 
-	divUpload.addEventListener("dragenter", dragenter, false);
+	divUpload.addEventListener("dragenter", dragover, false);
 	divUpload.addEventListener("dragover", dragover, false);
+	divUpload.addEventListener("dragleave", dragleave, false);
+	divUpload.addEventListener("dragend", dragleave, false);
 	divUpload.addEventListener("drop", drop, false);
-	function dragenter(e) {
-  	e.stopPropagation();
-  	e.preventDefault();
-	}
+
+	var graph = editorUi.editor.graph;
+	var pt = mxUtils.convertPoint(graph.container, mxEvent.getClientX(event), mxEvent.getClientY(event));
+	var tr = graph.view.translate;
+	var scale = graph.view.scale;
+	var x = pt.x / scale - tr.x;
+	var y = pt.y / scale - tr.y;
 
 	function dragover(e) {
+		divUpload.classList.add('dragover');
   	e.stopPropagation();
   	e.preventDefault();
 	}
@@ -159,59 +214,48 @@ ImageImportDialog = function(editorUi) {
 	function drop(e) {
   	e.stopPropagation();
   	e.preventDefault();
-  	//you can check e's properties
-  	//console.log(e);
   	var dt = e.dataTransfer;
   	var files = dt.files;
+
+		handleFiles(files);
   	//this code line fires your 'handleImage' function (imageLoader change event)
-  	imageLoader.files = files;
+  	//imageLoader.files = files;
+		divUpload.classList.remove('dragover');
 	}
 
+	function dragleave(e){
+		e.preventDefault();
+		divUpload.classList.remove('dragover');
+	}
+	
+	function insertImage(img){
+			var data = img.src || '';
+			if (data == '')
+				return;
+			var w = Math.max(1, img.width);
+			var h = Math.max(1, img.height);
+				// Converts format of data url to cell style value for use in vertex
+				var semi = data.indexOf(';');
+				if (semi > 0)	{
+					data = data.substring(0, semi) + data.substring(data.indexOf(',', semi + 1));
+				}
+
+				var pt = graph.getInsertPoint();
+				graph.setSelectionCell(graph.insertVertex(null, null, '', pt.x+offsetPoint, pt.y+offsetPoint, w, h,
+					'shape=image;aspect=fixed;image=' + data + ';'));
+				offsetPoint +=10;
+
+		editorUi.hideDialog();
+	}
 	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function(){
 		editorUi.hideDialog();
 	});
 	cancelBtn.className = 'geBtn';
 	div.appendChild(cancelBtn);
 
-	var okBtn = mxUtils.button(mxResources.get('ok'), function(e){
-			var graph = editorUi.editor.graph;
-
-			var pt = mxUtils.convertPoint(graph.container, mxEvent.getClientX(e), mxEvent.getClientY(e));
-			var tr = graph.view.translate;
-			var scale = graph.view.scale;
-			var x = pt.x / scale - tr.x;
-			var y = pt.y / scale - tr.y;
-
-			var data = imgPreview.src;
-
-			//	img.onload = function() {
-				var w = Math.max(1, imgPreview.width);
-				var h = Math.max(1, imgPreview.height);
-				//			console.log('w='+w+' h='+h);
-				// Converts format of data url to cell style value for use in vertex
-				var semi = data.indexOf(';');
-				if (semi > 0)	{
-					data = data.substring(0, semi) + data.substring(data.indexOf(',', semi + 1));
-				}
-				//graph.insertVertex(null, null, '', x, y, w, h, 'shape=image;image=' + data + ';');
-				var bundle = new mxg.mxImageBundle();
-				var parent = graph.getDefaultParent();
-				var name = Random.id;
-				bundle.putImage(name, data);
-
-				//graph.insertVertex(parent, null, '', 100, 20, 130, 80, 'shape=image;image=' + name);
-				//graph.insertVertex(parent, null, '', 100, 20, w, h, 'shape=image;image='+bundle.getImage(name)+';');
-
-				graph.clearSelection();
-				graph.insertVertex(parent, null, '', 100, 20, w, h, 'shape=image;html=1;imageAspect=0;image='+data+';');
-
-				//		};
-				//		img.src = data;
-				editorUi.hideDialog();
-		});
-
-	okBtn.className = 'geBtn gePrimaryBtn';
-	div.appendChild(okBtn);
+	//var okBtn = mxUtils.button(mxResources.get('ok'), insertImage);
+	//okBtn.className = 'geBtn gePrimaryBtn';
+	//div.appendChild(okBtn);
 
 	this.container = div;
 };

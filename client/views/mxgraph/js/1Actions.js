@@ -66,7 +66,9 @@ Actions.prototype.init = function()
 //this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
 	exitIFrame = function(){
 		ui.hideDialog();
-		window.parent.postMessage("Close Iframe","*");
+		Meteor.setTimeout(function(){
+				window.parent.postMessage("Close Iframe","*");
+			},300);
 	};
 	saveAction = function(){
 		if (!ui.editor.modified && !ui.editor.graph.isEditing()){
@@ -80,7 +82,7 @@ Actions.prototype.init = function()
 					savemxGraph();
 		},800);
 
-		ui.editor.filename = Router.current().params.query.id+'.png';
+		ui.editor.filename = Session.get('idgraph')+'.png';
 	};
 	this.addAction('save', function() {
 		saveAction();
@@ -98,7 +100,7 @@ Actions.prototype.init = function()
 // Saved graph
  	savemxGraph = function(){
 		var graph = ui.editor.graph;
-		var idgraph = Router.current().params.query.id;
+		var idgraph = Session.get('idgraph');
 
 		if (graph.isEditing()){
 			graph.stopEditing();
@@ -1366,7 +1368,8 @@ Actions.prototype.init = function()
 		}
 	}).isEnabled = isGraphEnabled;
 
-	this.addAction('insertImage...', function(image)
+	//this.addAction('insertImage...', function(image)
+	this.addAction('image...', function(image)
 	{
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
 		{

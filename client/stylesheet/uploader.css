@@ -11,7 +11,7 @@
   text-align: center;
 }
 
-#uploader:hover{color:#999;}
+.dragover {border:2px solid #0e5e4e !important;background:#67d2bc !important;color:white;}
 
 #filePhoto{
     margin-top:10px;

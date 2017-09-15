@@ -1,3 +1,4 @@
+<!--
 <template name="layout">
   <div class="container">
     {{> yield}}
@@ -12,4 +13,14 @@
 </template>
 
 <template name="d">
+</template>
+-->
+<template name="layout">
+  <div class="container">
+  {{#if Template.subscriptionsReady}}
+	     {{> Template.dynamic template=main }}
+  {{else}}
+    {{> loader}}
+  {{/if}}
+  </div>
 </template>

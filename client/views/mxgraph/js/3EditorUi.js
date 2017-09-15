@@ -14,13 +14,21 @@ EditorUi = function(editor, container, lightbox)
 
 	// check query params
 	// no draw permitted without correct ID
-	if (!Router.current().params.query.id){
-		this.showDialog(new noDrawDialog(ui,'DRAW NOT PERMITTED').container, 320, 280, false, false);
+	var idgraph = Session.get('idgraph');
+	if (!idgraph){
+		this.showDialog(new noDrawDialog(ui,'DRAW NOT PERMITTED..').container, 320, 280, false, false);
+
+		Meteor.setTimeout(function(){
+				window.parent.postMessage("Close Iframe","*");
+		},2500);
 		return false;
 	}
 
 	var graph = this.editor.graph;
 	graph.lightbox = lightbox;
+
+	// default vertex style of the graph
+	graph.getStylesheet().putDefaultVertexStyle(vertexStyleDefault);
 
 	// Pre-fetches submenu image or replaces with embedded image if supported
 	if (mxClient.IS_SVG)
@@ -886,9 +894,13 @@ EditorUi = function(editor, container, lightbox)
 	this.editor.resetGraph();
 	this.init();
 
+
+/*
 	// Load a graph from FSCollections
 	xml = new FS.File();
-	xml = MXGImages.findOne({_id: Router.current().params.query.id});
+	xml = MXGImages.findOne({_id: Session.get('idgraph')});
+	//console.log('idgraph==='+idgraph,xml);
+	//xml = MXGImages.findOne({_id: idgraph});
 	if(xml){
 		var image = null;
 		if(xml.backgroundImage){
@@ -904,10 +916,8 @@ EditorUi = function(editor, container, lightbox)
 			this.editor.graph.model.endUpdate();
 			this.setBackgroundImage(image);
 		}
-
-
 	}
-
+*/
 	this.editor.setModified(false);
 	this.open();
 
@@ -930,7 +940,6 @@ EditorUi = function(editor, container, lightbox)
 			saveAction();
 		});
 	}
-
 };
 
 // Extends mxEventSource
@@ -1044,6 +1053,42 @@ EditorUi.prototype.init = function()
 				sel.addRange(range);
 			}
 		}
+	}));
+
+	// DragandDrop image on graph container
+	var dropArea = null;
+	mxEvent.addListener(graph.container, 'dragover', mxUtils.bind(this, function(e)
+	{
+		if(dropArea == null && (!mxClient.IS_IE || document.documentMode > 10))
+		{
+			dropArea = this.highlightContainer(graph.container);
+		}
+		e.preventDefault();
+	}));
+
+	mxEvent.addListener(graph.container, 'drop', mxUtils.bind(this, function(e)
+	{
+		if (dropArea != null){
+			dropArea.parentNode.removeChild(dropArea);
+			dropArea = null;
+		}
+		var pt = mxUtils.convertPoint(graph.container, mxEvent.getClientX(e), mxEvent.getClientY(e));
+		var tr = graph.view.translate;
+		var scale = graph.view.scale;
+		var x = pt.x / scale - tr.x;
+		var y = pt.y / scale - tr.y;
+
+		if (mxEvent.isAltDown(e))
+		{
+			x = 0;
+			y = 0;
+		}
+		var dt = e.dataTransfer;
+  	var files = dt.files;
+
+		this.handleFiles(files,x,y);
+		e.stopPropagation();
+		e.preventDefault();
 	}));
 
 	// Updates action states

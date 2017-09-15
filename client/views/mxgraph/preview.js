@@ -1,20 +1,16 @@
 Template.mxPreview.helpers({
   images: function () {
-    return MXGImages.find({_id:Router.current().params.query.id}); // Where Images is an FS.Collection instance
-//    return MXGImages.find({_id:Router.current().params.id}); // Where Images is an FS.Collection instance
+    var idgraph = Session.get('idgraph');
+    return MXGImages.find({_id:idgraph});
   }
 });
 
 Template.mxPreview.onCreated(function(){
-  return;
-    idgraph = Router.current().params.query.id;
+    var idgraph = Session.get('idgraph');
     //var xml = MXGImages.findOne({_id: idgraph});
     var fileObj = new FS.File();
     fileObj = MXGImages.findOne({_id: idgraph});
-    //console.log(fileObj);
 
-    //xml = Grapho.findOne({id:idgraph});
-return;
     if( !fileObj ){
       var div = document.createElement('div');
       div.setAttribute('align', 'center');
@@ -30,7 +26,7 @@ return;
       mxUtils.write(div, 'Powered by mxGraph ' + mxClient.VERSION);
       mxUtils.br(div);
       var link = document.createElement('a');
-      link.setAttribute('href', 'http://www.mxgraph.com/');
+      link.setAttribute('href', 'https://www.jgraph.com/');
       link.setAttribute('target', '_blank');
       mxUtils.write(link, 'www.jgraph.com');
       div.appendChild(link);
@@ -41,6 +37,7 @@ return;
 
       return false;
     }
+return;
 
     var container = document.createElement('div');
     container.id = "exentiqGraph"

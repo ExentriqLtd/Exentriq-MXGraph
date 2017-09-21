@@ -105,7 +105,7 @@ mxMorphing = mxg.mxMorphing ;
 mxFastOrganicLayout = mxg.mxFastOrganicLayout;
 mxCompactTreeLayout = mxg.mxCompactTreeLayout;
 
-mxg.mxResources.add('public/mxgraph/resourcers/editor');
+//mxg.mxResources.add('public/mxgraph/resourcers/editor');
 urlParams = (function(url) {
   var result = new Object();
   var idx = url.lastIndexOf('?');
@@ -118,7 +118,7 @@ urlParams = (function(url) {
 
       if (idx > 0) {
         result[params[i].substring(0, idx)] = params[i].substring(idx + 1);
-        console.log("urlparams="+params[i].substring(idx + 1));
+      //  console.log("urlparams="+params[i].substring(idx + 1));
       }
     }
   }

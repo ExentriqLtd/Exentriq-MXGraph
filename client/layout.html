@@ -17,10 +17,6 @@
 -->
 <template name="layout">
   <div class="container">
-  {{#if Template.subscriptionsReady}}
-	     {{> Template.dynamic template=main }}
-  {{else}}
-    {{> loader}}
-  {{/if}}
+	   {{> Template.dynamic template=main }}
   </div>
 </template>

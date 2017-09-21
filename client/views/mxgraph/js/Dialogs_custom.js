@@ -18,7 +18,7 @@ noDrawDialog = function(editorUi,message)
 	img.setAttribute('src', IMAGE_PATH + '/logo.png');
 	div.appendChild(img);
 	mxg.mxUtils.br(div);
-	mxg.mxUtils.write(div, 'Powered by mxGraph ' + mxClient.VERSION);
+	//mxg.mxUtils.write(div, 'Powered by mxGraph ' + mxClient.VERSION);
 	mxg.mxUtils.br(div);
 	var link = document.createElement('a');
 	link.setAttribute('href', 'http://www.mxgraph.com/');
@@ -227,7 +227,7 @@ ImageImportDialog = function(editorUi) {
 		e.preventDefault();
 		divUpload.classList.remove('dragover');
 	}
-	
+
 	function insertImage(img){
 			var data = img.src || '';
 			if (data == '')

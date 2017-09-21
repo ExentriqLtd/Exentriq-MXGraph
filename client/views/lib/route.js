@@ -1,88 +1,6 @@
+itemSubscription=null;
+BlazeLayout.setRoot('body');
 
-var authRoutes = ExSSO.authRouter(function(context, isCordova){
-	if (isCordova){
-		return '/login';
-	}
-	return Utils.cleanupParams(Meteor.absoluteUrl(context.path));
-});
-
-var mxgRoutes = authRoutes.group({
-  name: "mxgraph-router",
-  triggersEnter:[
-    function(context){
-      var idgraph = params.idgraph;
-      var token = params.token;
-      Session.set('idgraph',idgraph);
-      Session.set('token',token);
-    }
-  ]
-});
-
-/*
-mxgRoutes.onRouteRegister(function(route) {
-  // do anything with the route object
-});
-*/
-
-mxgRoutes.route('/draw/:idgraph/:token', {
-  name: 'drawing',
-  triggersEnter:[function (context, redirect) {
-      BlazeLayout.render("layout",{ main: "loader" });
-      Meteor.setTimeout(function(){
-        let itemSubscription = Meteor.subscribe('mxgimages',context.params.idgraph);
-        Tracker.autorun(function() {
-          if (itemSubscription.ready()) {
-            BlazeLayout.render("layout",{ main: "mxGraphEditor" });
-          }
-        });
-      },1000);
-  }],
-  action: function(params, queryParams) {
-
-  }
-});
-
-mxgRoutes.route('/preview/:idgraph/:token', {
-    name: 'preview',
-    triggersEnter:[function (context, redirect) {
-      BlazeLayout.render("layout",{ main: "loader" });
-      let itemSubscription = Meteor.subscribe('mxgimages',context.params.idgraph);
-        Tracker.autorun(function() {
-            if (itemSubscription.ready()) {
-              BlazeLayout.render("layout",{ main: "mxPreview" });
-            }
-        });
-    }],
-    action: function(params, queryParams) {
-
-    }
-});
-
-mxgRoutes.route('/delete/:idgraph/:token', {
-    name: 'delete',
-    triggersEnter:[function (context, redirect) {
-      BlazeLayout.render("layout",{ main: "loader" });
-      let itemSubscription = Meteor.subscribe('mxgimages',context.params.idgraph);
-        Tracker.autorun(function() {
-            if (itemSubscription.ready()) {
-            //  console.log('route delete='+context.params.idgraph);
-              Meteor.call('mxgDelete',context.params.idgraph,function(err,id){
-                if (!err) {
-                //  console.log('Graph removed');
-                  window.parent.postMessage("CloseDeleteIframe","*");
-                }
-              });
-            }
-        });
-    }],
-    action: function(params, queryParams) {
-        var idgraph = params.idgraph;
-        var token = params.token;
-        Session.set('idgraph',idgraph);
-        Session.set('token',token);
-      //  BlazeLayout.render("layout",{ main: "mxPreview" });
-    }
-});
 
 FlowRouter.notFound = {
     // Subscriptions registered here don't have Fast Render support.
@@ -93,6 +11,91 @@ FlowRouter.notFound = {
       },5000);
     }
 }
+
+FlowRouter.onRouteRegister(function(route) {
+  // do anything with the route object
+});
+
+var authRoutes = ExSSO.authRouter(function(context, isCordova){
+	if (isCordova){
+		return '/login';
+	}
+	return Meteor.absoluteUrl(context.path);
+});
+
+var mxgRoutes = authRoutes.group({
+  name : 'mxg-routes',
+  triggersEnter:[function(context){
+    // check if iframe has loaded plugin
+    itemSubscription = Meteor.subscribe('mxgimages',context.params.idgraph);
+    if(context.queryParams.sessionToken==null)
+      BlazeLayout.render("layout",{ main: "notFoundTemplate" });
+    else
+      BlazeLayout.render("layout",{ main: "loader" });
+  }],
+
+});
+
+mxgRoutes.route('/draw/:idgraph', {
+  name: 'drawing',
+  triggersEnter:[function (context, redirect) {
+        Tracker.autorun(function() {
+          if(itemSubscription)
+            if (itemSubscription.ready()){
+              if(window.location == window.parent.location){
+                  BlazeLayout.render("layout",{ main: "notFoundTemplate" });
+              }else
+                BlazeLayout.render("layout",{ main: "mxGraphEditor" });
+            }
+        });
+  }],
+  action: function(params, queryParams) {
+    var idgraph = params.idgraph;
+    Session.set('idgraph',idgraph);
+  }
+});
+
+mxgRoutes.route('/preview/:idgraph', {
+    name: 'preview',
+    triggersEnter:[function (context, redirect) {
+      //BlazeLayout.render("layout",{ main: "loader" });
+      //let itemSubscription = Meteor.subscribe('mxgimages',context.params.idgraph);
+        Tracker.autorun(function() {
+          if(itemSubscription){
+            if (itemSubscription.ready())
+              BlazeLayout.render("layout",{ main: "mxPreview" });
+          }else{
+            console.log('PPPP');
+          }
+        });
+    }],
+    action: function(params, queryParams) {
+        var idgraph = params.idgraph;
+        Session.set('idgraph',idgraph);
+    }
+});
+
+mxgRoutes.route('/delete/:idgraph', {
+    name: 'delete',
+    triggersEnter:[function (context, redirect) {
+        Tracker.autorun(function() {
+            if(itemSubscription) {
+              if (itemSubscription.ready()) {
+                Meteor.call('mxgDelete',context.params.idgraph,function(err,id){
+                  if (!err) {
+                    //  console.log('Graph removed');
+                    window.parent.postMessage("CloseDeleteIframe","*");
+                  }
+                });
+              }
+            }
+        });
+    }],
+    action: function(params, queryParams) {
+        var idgraph = params.idgraph;
+        Session.set('idgraph',idgraph);
+    }
+});
 
 
 /******** IRON:ROUTER

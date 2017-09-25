@@ -33,3 +33,5 @@ jquery
 tap:i18n@1.8.2
 underscore@1.0.10
 underscorestring:underscore.string@3.3.4
+exentriq:guardian-connector
+coffeescript@1.12.3_1

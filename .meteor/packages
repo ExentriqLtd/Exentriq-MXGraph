@@ -33,5 +33,10 @@ jquery
 tap:i18n@1.8.2
 underscore@1.0.10
 underscorestring:underscore.string@3.3.4
+<<<<<<< HEAD
 check
 http@1.2.12
+=======
+exentriq:guardian-connector
+coffeescript@1.12.3_1
+>>>>>>> d250848aa9c07b8d2f1dd4d3f6ab75dba8eac837

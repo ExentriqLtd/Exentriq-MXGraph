@@ -288,8 +288,7 @@ BackgroundImageDialog = function(editorUi, applyFn) {
 	{
 		if (!resetting && urlInput.value != '' )
 		{
-			/*
-			editorUi.loadImage(mxUtils.trim(urlInput.value), function(img)
+			editorUi.imageLoad(mxUtils.trim(urlInput.value), function(img)
 			{
 				widthInput.value = img.width;
 				heightInput.value = img.height;
@@ -300,7 +299,6 @@ BackgroundImageDialog = function(editorUi, applyFn) {
 				widthInput.value = '';
 				heightInput.value = '';
 			});
-			*/
 		}
 		else
 		{

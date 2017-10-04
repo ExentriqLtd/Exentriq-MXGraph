@@ -1,3 +1,14 @@
+EditorUi.prototype.imageLoad = function(url, onload, onerror) {
+  var img = new Image();
+  img.onload = function() {
+    onload(img);
+  }
+  if (onerror != null) {
+    img.onerror = onerror;
+  }
+  img.src = url;
+};
+
 EditorUi.prototype.insertImage = function(img,x,y){
     var data = img.src || '';
     if(data =='')

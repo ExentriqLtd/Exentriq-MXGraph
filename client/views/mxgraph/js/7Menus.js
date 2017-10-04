@@ -414,8 +414,8 @@ Menus.prototype.init = function()
 		this.addSubmenu('distribute', menu, parent);
 		menu.addSeparator(parent);
 		this.addSubmenu('navigation', menu, parent);
-		this.addSubmenu('insert', menu, parent);
-		this.addSubmenu('layout', menu, parent);
+		//this.addSubmenu('insert', menu, parent);
+		//this.addSubmenu('layout', menu, parent);
 		this.addMenuItems(menu, ['-', 'group', 'ungroup', 'removeFromGroup', '-', 'clearWaypoints', 'autosize'], parent);
 	}))).isEnabled = isGraphEnabled;
 	this.put('insert', new Menu(mxUtils.bind(this, function(menu, parent)
@@ -467,10 +467,12 @@ Menus.prototype.init = function()
 		                         'editData', 'editTooltip', 'editStyle', '-', 'edit', '-', 'editLink', 'openLink', '-',
 		                         'selectVertices', 'selectEdges', 'selectAll', 'selectNone', '-', 'lockUnlock']);
 	})));
+
 	this.put('extras', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['copyConnect', 'collapseExpand', '-', 'editDiagram']);
 	})));
+
 	this.put('help', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
 		this.addMenuItems(menu, ['help', '-', 'about']);

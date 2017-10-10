@@ -7,6 +7,8 @@ Template.mxGraphEditor.onRendered(function(){
 
 	require("/public/grapheditor/jscolor/jscolor.js");
   jscolor.dir = "/grapheditor/jscolor/";
+
+
 /*
 	//require("/public/mxgraph/sanitizer/sanitizer.min.js");
   //require("/public/mxgraph/js/mxClient.js");
@@ -76,8 +78,33 @@ Template.mxGraphEditor.onRendered(function(){
         themes[Graph.prototype.defaultThemeName] = xhr[1].getDocumentElement();
 
         // Main
-        new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
+        var mxgEditorUI = new EditorUi(new Editor(urlParams['chrome'] == '0', themes));
+
+        //Load xml SAVED
+        let xml = MXGImages.findOne(Session.get('idgraph'));
+
+        if(xml){
+          var image = null;
+          if(xml.backgroundImage){
+            image = new mxg.mxImage(xml.backgroundImage.src,xml.backgroundImage.w,xml.backgroundImage.h);
+          }
+
+          mxgEditorUI.editor.graph.model.beginUpdate();
+          try{
+            mxgEditorUI.editor.setGraphXml(mxUtils.parseXml(xml.xml).documentElement);
+          } catch(e){
+            mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
+          } finally {
+            mxgEditorUI.editor.graph.model.endUpdate();
+            mxgEditorUI.setBackgroundImage(image);
+          }
+          mxgEditorUI.editor.setModified(false);
+          mxgEditorUI.open();
+        }else {
+          //console.log('FSCollections NOT FOUND');
+        }
         //console.log(onePageCheckBox.checked);
+
       },
       function() {
         document.body.innerHTML = '<center style="margin-top:10%;">Error loading resource files. Please check browser console.</center>';
@@ -94,6 +121,9 @@ Template.mxGraphEditor.events({
 });
 
 Template.mxGraphEditor.helpers({
+  isReady : function(){
+    return FlowRouter.subsReady(Meteor.subscribe('mxgimages'));
+  }
 /*
    'xmlGraph' : () =>{
       return Grapho.find({'id':Session.get('id')}).fetch() || {id:0,xml:''};

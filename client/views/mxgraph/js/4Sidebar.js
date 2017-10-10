@@ -903,20 +903,27 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	var fns = [
 	 	this.createVertexTemplateEntry('whiteSpace=wrap;html=1;', 120, 60, '', 'Rectangle', null, null, 'rect rectangle box'),
 	 	this.createVertexTemplateEntry('rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Rounded Rectangle', null, null, 'rounded rect rectangle box'),
- 		this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Ellipse', null, null, 'oval ellipse state'),
+ 		this.createVertexTemplateEntry('shape=ellipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Ellipse', null, null, 'oval ellipse state'),
 	 	// Explicit strokecolor/fillcolor=none is a workaround to maintain transparent background regardless of current style
  		this.createVertexTemplateEntry('text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;',
  			40, 20, 'Text', 'Text', null, null, 'text textbox textarea label'),
  		this.createVertexTemplateEntry('shape=ext;double=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rectangle', null, null, 'rect rectangle box double'),
 	 	this.createVertexTemplateEntry('shape=ext;double=1;rounded=1;whiteSpace=wrap;html=1;', 120, 60, '', 'Double Rounded Rectangle', null, null, 'rounded rect rectangle box double'),
-	 	this.createVertexTemplateEntry('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Double Ellipse', null, null, 'oval ellipse start end state double'),
-	 	this.createVertexTemplateEntry('rhombus;whiteSpace=wrap;html=1;', 80, 80, '', 'Diamond', null, null, 'diamond rhombus if condition decision conditional question test'),
-	 	this.createVertexTemplateEntry('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram'),
-	 	this.createVertexTemplateEntry('triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', null, null, 'triangle logic inverter buffer'),
+	 	this.createVertexTemplateEntry('shape=ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;', 120, 80, '', 'Double Ellipse', null, null, 'oval ellipse start end state double'),
+		this.createVertexTemplateEntry('shape=rhombus;whiteSpace=wrap;html=1;', 80, 80, '', 'Diamond', null, null, 'diamond rhombus if condition decision conditional question test'),
+
+		this.createVertexTemplateEntry('whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Square', null, null, 'square'),
+		this.createVertexTemplateEntry('shape=ext;double=1;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Double Square', null, null, 'double square'),
+		this.createVertexTemplateEntry('shape=ellipse;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Circle', null, null, 'circle'),
+		this.createVertexTemplateEntry('shape=doubleEllipse;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Double Circle', null, null, 'double circle'),
+
+
+		this.createVertexTemplateEntry('shape=parallelogram;whiteSpace=wrap;html=1;', 120, 60, '', 'Parallelogram'),
+	 	this.createVertexTemplateEntry('shape=triangle;whiteSpace=wrap;html=1;', 60, 80, '', 'Triangle', null, null, 'triangle logic inverter buffer'),
 	 	this.createVertexTemplateEntry('shape=cylinder;whiteSpace=wrap;html=1;', 60, 80, '', 'Cylinder', null, null, 'cylinder data database'),
 	 	this.createVertexTemplateEntry('shape=hexagon;perimeter=hexagonPerimeter;whiteSpace=wrap;html=1;', 120, 80, '', 'Hexagon', null, null, 'hexagon preparation'),
 	 	this.createVertexTemplateEntry('shape=process;whiteSpace=wrap;html=1;', 120, 60, '', 'Process', null, null, 'process task'),
-	 	this.createVertexTemplateEntry('ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80, '', 'Cloud', null, null, 'cloud network'),
+	 	this.createVertexTemplateEntry('shape=ellipse;shape=cloud;whiteSpace=wrap;html=1;', 120, 80, '', 'Cloud', null, null, 'cloud network'),
 	 	this.createVertexTemplateEntry('shape=document;whiteSpace=wrap;html=1;', 120, 80, '', 'Document'),
 	 	this.createVertexTemplateEntry('shape=internalStorage;whiteSpace=wrap;html=1;', 80, 80, '', 'Internal Storage'),
 	 	this.createVertexTemplateEntry('shape=cube;whiteSpace=wrap;html=1;', 120, 80, '', 'Cube'),
@@ -926,7 +933,7 @@ Sidebar.prototype.addGeneralPalette = function(expand)
 	 	this.createVertexTemplateEntry('shape=note;whiteSpace=wrap;html=1;', 80, 100, '', 'Note'),
 	    this.createVertexTemplateEntry('shape=card;whiteSpace=wrap;html=1;', 80, 100, '', 'Card'),
 	 	this.createEdgeTemplateEntry('endArrow=classic;html=1;', 50, 50, '', 'Connection'),
-	 	this.createEdgeTemplateEntry('endArrow=classic;startArrow=classic;html=1;', 50, 50, '', 'Connection')
+	 	this.createEdgeTemplateEntry('endArrow=classic;startArrow=classic;html=1;;', 50, 50, '', 'Connection')
 	];
 
 	this.addPaletteFunctions('general', mxResources.get('general'), (expand != null) ? expand : true, fns);
@@ -941,9 +948,9 @@ Sidebar.prototype.addBasicPalette = function(dir)
 		';whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2',
 		null, null, null, null, [
 		this.createVertexTemplateEntry('whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Square', null, null, 'square'),
-		this.createVertexTemplateEntry('ellipse;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Circle', null, null, 'circle'),
+		this.createVertexTemplateEntry('shape=ellipse;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Circle', null, null, 'circle'),
 		this.createVertexTemplateEntry('shape=ext;double=1;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Double Square', null, null, 'double square'),
-		this.createVertexTemplateEntry('ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Double Circle', null, null, 'double circle')
+		this.createVertexTemplateEntry('shape=ellipse;shape=doubleEllipse;whiteSpace=wrap;html=1;aspect=fixed;', 80, 80, '', 'Double Circle', null, null, 'double circle')
 	]);
 };
 
@@ -1010,7 +1017,7 @@ Sidebar.prototype.addMiscPalette = function(expand)
 	 	})),
 	 	this.createVertexTemplateEntry('shape=umlActor;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;html=1;', 30, 60, 'Actor', 'Actor', false, null, 'user person human stickman'),
 	 	this.createVertexTemplateEntry('html=1;whiteSpace=wrap;comic=1;strokeWidth=2;fontFamily=Comic Sans MS;fontStyle=1;', 120, 60, 'RECTANGLE', 'Comic Rectangle', true, null, 'comic rectangle rect box text retro'),
-	 	this.createVertexTemplateEntry('rhombus;html=1;align=center;whiteSpace=wrap;comic=1;strokeWidth=2;fontFamily=Comic Sans MS;fontStyle=1;', 100, 100, 'DIAMOND', 'Comic Diamond', true, null, 'comic diamond rhombus if condition decision conditional question test retro'),
+	 	this.createVertexTemplateEntry('shape=rhombus;html=1;align=center;whiteSpace=wrap;comic=1;strokeWidth=2;fontFamily=Comic Sans MS;fontStyle=1;', 100, 100, 'DIAMOND', 'Comic Diamond', true, null, 'comic diamond rhombus if condition decision conditional question test retro'),
 	 	this.createEdgeTemplateEntry('edgeStyle=segmentEdgeStyle;rounded=0;comic=1;strokeWidth=2;endArrow=blockThin;html=1;fontFamily=Comic Sans MS;fontStyle=1;', 50, 50, '', 'Comic Arrow 1'),
 	 	this.createEdgeTemplateEntry('rounded=0;comic=1;strokeWidth=2;endArrow=blockThin;html=1;fontFamily=Comic Sans MS;fontStyle=1;', 50, 50, '', 'Comic Arrow 2'),
 	 	this.createVertexTemplateEntry('html=1;whiteSpace=wrap;aspect=fixed;shape=isoRectangle;', 150, 90, '', 'Isometric Square', true, null, 'rectangle rect box iso isometric'),
@@ -1027,8 +1034,8 @@ Sidebar.prototype.addMiscPalette = function(expand)
 	 	this.createVertexTemplateEntry('icon;html=1;image=' + this.gearImage, 60, 60, 'Icon', 'Icon', false, null, 'icon image symbol'),
 	 	this.createVertexTemplateEntry('label;whiteSpace=wrap;html=1;image=' + this.gearImage, 140, 60, 'Label', 'Label 1', null, null, 'label image icon symbol'),
 	 	this.createVertexTemplateEntry('label;whiteSpace=wrap;html=1;align=center;verticalAlign=bottom;spacingLeft=0;spacingBottom=4;imageAlign=center;imageVerticalAlign=top;image=' + this.gearImage, 120, 80, 'Label', 'Label 2', null, null, 'label image icon symbol'),
-	    this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Arrow'),
-	    this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Arrow'),
+	  this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Arrow'),
+	  this.createEdgeTemplateEntry('shape=flexArrow;endArrow=classic;startArrow=classic;html=1;fillColor=#ffffff;', 50, 50, '', 'Arrow'),
 	 	this.createEdgeTemplateEntry('endArrow=none;html=1;dashed=1;dashPattern=1 4;', 50, 50, '', 'Dotted Line'),
 	 	this.createEdgeTemplateEntry('endArrow=none;dashed=1;html=1;', 50, 50, '', 'Dashed Line'),
 	 	this.createEdgeTemplateEntry('endArrow=none;html=1;', 50, 50, '', 'Line'),
@@ -1044,7 +1051,7 @@ Sidebar.prototype.addMiscPalette = function(expand)
 			cell.geometry.relative = true;
 			cell.edge = true;
 
-		    return this.createEdgeTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Curve');
+		  return this.createEdgeTemplateFromCells([cell], cell.geometry.width, cell.geometry.height, 'Curve');
 	 	})),
 	 	this.createEdgeTemplateEntry('shape=link;html=1;', 50, 50, '', 'Link')
 	];

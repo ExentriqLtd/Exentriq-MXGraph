@@ -64,35 +64,63 @@ Actions.prototype.init = function()
 */
 
 //this.addAction('save', function() { ui.saveFile(false); }, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
-	this.addAction('save', function() {
-			var dlg = new waitDialog(ui);
-			ui.showDialog(dlg.container, 250, 50, true, false);
-			Meteor.setTimeout(
-				function(){
-						savemxGraph();
-			},1000);
+	exitIFrame = function(){
+		ui.hideDialog();
+		Meteor.setTimeout(function(){
+				window.parent.postMessage("Close Iframe","*");
+			},300);
+	};
+	saveAction = function(){
+		if (!ui.editor.modified && !ui.editor.graph.isEditing()){
+			exitIFrame();
+			return;
+		}
+		var dlg = new waitDialog(ui,mxResources.get('pleaseWait'));
+		ui.showDialog(dlg.container, 250, 50, true, false);
+		Meteor.setTimeout(
+			function(){
+					savemxGraph();
+		},800);
 
-			ui.editor.filename = Router.current().params.query.id+'.png';
+		ui.editor.filename = Session.get('idgraph')+'.png';
+	};
+	this.addAction('save', function() {
+		saveAction();
 //		ui.saveFile(true);
 	}, null, null, 'Ctrl+S').isEnabled = isGraphEnabled;
 
 	this.addAction('exit', function() {
-			if(ui.editor.modified){
-				confirmExitEditor(ui);
-				return;
-			}
-			// parent window remove dialog with iframe
-			window.parent.postMessage("Close Iframe","*");
+		saveAction();
+		//savemxGraph();
 	}, null, null, null).isEnabled = isGraphEnabled;
 
 //this.addAction('saveAs...', function() { ui.saveFile(true); }, null, null, 'Ctrl+Shift+S').isEnabled = isGraphEnabled;
 //this.addAction('export...', function() { ui.showDialog(new ExportDialog(ui).container, 300, 230, true, true); });
 
 // Saved graph
- 	var savemxGraph = function(){
-		var idgraph = Router.current().params.query.id;
-		if (ui.editor.graph.isEditing()){
-			ui.editor.graph.stopEditing();
+ 	savemxGraph = function(){
+		var graph = ui.editor.graph;
+		var idgraph = Session.get('idgraph');
+
+		if (graph.isEditing()){
+			graph.stopEditing();
+		}
+
+		var xmlData = mxUtils.getXml(ui.editor.getGraphXml());
+
+		// add a vertex at top when background image is loaded
+		if(graph.backgroundImage){
+			var bk = new Object();
+			//console.log("backgroundImage found");
+			bk.src = graph.backgroundImage.src;
+			bk.w = graph.backgroundImage.width;
+			bk.h = graph.backgroundImage.height;
+			var v1 = graph.insertVertex(graph.getDefaultParent(), 'topPage', '', 0, 0, 0.1, 0.1,"fillcolor=none");
+			var v2 = graph.insertVertex(graph.getDefaultParent(), 'bottomPage', '', graph.pageFormat.width-0.2, graph.pageFormat.height-0.2, 0.1, 0.1,"fillcolor=none");
+		}else {
+				var bk = null;
+				var v1 = null;
+				var v2 = null;
 		}
 
 /*
@@ -102,8 +130,7 @@ Actions.prototype.init = function()
 		ui.editor.updateGraphComponents();
 		ui.editor.graph.stopEditing(true);
 */
-		var xmlData = mxUtils.getXml(ui.editor.getGraphXml());
-		var graph = ui.editor.graph;
+
 		var bg = graph.background;
 	  if (bg == null || bg == mxConstants.NONE){
 			bg = '#ffffff';
@@ -116,6 +143,8 @@ Actions.prototype.init = function()
 		var h = Math.round(bounds.y + bounds.height + 4);
 		var xml = mxUtils.getXml(mxUtils.getViewXml(graph, 1), '\n');
 //	new mxXmlRequest(EXPORT_URL, 'filename=graph.jpg&format=jpeg&w=' + w +'&h=' + h + '&xml=' + encodeURIComponent(xml)).simulate(document, '_blank');
+
+
 /*
 		console.log(graph.pageFormat.width);// = this.graph.defaultPageVisible;
 		console.log(graph.pageFormat.height);// = this.graph.defaultPageVisible;
@@ -123,6 +152,7 @@ Actions.prototype.init = function()
 		console.log(graph.background);// = this.graph.defaultPageVisible;
 		console.log("HH="+ $("#heightInput").val() );
 */
+
 		var xmlSvg = mxUtils.getXml(graph.getSvg(bg, s, b));
 
 		var container = document.createElement('div');
@@ -133,24 +163,43 @@ Actions.prototype.init = function()
     document.body.appendChild(container);
 
 		var svg = container.querySelector('svg');
+
+		var callSaveMxGraph = function(idgraph,xmlData,bk,buffer){
+			return Meteor.call('mxgSaveXML',idgraph,xmlData,bk,buffer,function (err, id) {
+				if (!err) {
+					ui.editor.setStatus(mxResources.get('saved') + ' ' + new Date());
+					ui.editor.setModified(false);
+					console.log("IMAGE SAVED!!");
+					//ui.hideDialog();
+
+					// exit to iframe
+					Meteor.setTimeout(exitIFrame,800);
+				}
+				return xmlData;
+			});
+		};
+
+		var removeVertex = function(id){
+			var tmp = graph.getModel().getCell(id);
+			if(graph.getModel().isVertex(tmp))	{
+					graph.removeCells([tmp]);
+				}
+		};
+
 		var saveCanvas = function(canvas) {
 			$(container).hide();
 			document.body.appendChild(canvas);
 			// export XML,and save image
 			var buffer = canvas.toDataURL();
 			if(idgraph !== null){
-				return Meteor.call('mxgSaveXML',idgraph,xmlData,xmlSvg,buffer,function (err, id) {
-					if (!err) {
-						ui.editor.setStatus(mxResources.get('saved') + ' ' + new Date());
-						ui.editor.setModified(false);
-//					ui.editor.graph.startEditing();
-						console.log("IMAGE SAVED!!");
-						ui.hideDialog();
-					}
-					return xmlData;
-				});
+				callSaveMxGraph(idgraph,xmlData,bk,buffer);
+				if(ui.editor.graph.backgroundImage){
+					removeVertex('topPage');
+					removeVertex('bottomPage');
+				}
 			}
 		};
+
 
 		function parseImages() {
 			var xlinkNS = "http://www.w3.org/1999/xlink";
@@ -239,10 +288,14 @@ Actions.prototype.init = function()
 						toDataURL(images[i]);
 				}
 				// else increment our counter
-				else if (++encoded === total) exportDoc();
+				else if (++encoded === total){
+					exportDoc();
+				}
 			}
 			// if there were no <image> element
-			if (total === 0) exportDoc();
+			if (total === 0 ){
+				 exportDoc();
+			 }
 		}
 
 		var exportDoc = function() {
@@ -260,6 +313,7 @@ Actions.prototype.init = function()
 			var svgImg = new Image();
 
 			svgImg.onload = function() {
+
 				var canvas = document.createElement('canvas');
 				// IE11 doesn't set a width on svg images...
 				canvas.width = this.width || bbox.width;
@@ -268,18 +322,25 @@ Actions.prototype.init = function()
 				canvas.getContext('2d').drawImage(svgImg, 0, 0, canvas.width, canvas.height);
 				saveCanvas(canvas);
 			};
+			svgImg.onerror = function(){
+				callSaveMxGraph(idgraph,xmlData,bk,'');
+				//ui.hideDialog();
+			}
 			svgImg.src = svgURL;
 		};
-		// lauch parse
+		// launch parse
 		parseImages();
+
 	}; // end of saveMxGraph
 
+/*
 	this.addAction('editDiagram...', function(){
 		var dlg = new EditDiagramDialog(ui);
 		ui.showDialog(dlg.container, 620, 420, true, true);
 		dlg.init();
 	});
-	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui).container, 320, 220, true, true); }).isEnabled = isGraphEnabled;
+*/	
+	this.addAction('pageSetup...', function() { ui.showDialog(new PageSetupDialog(ui).container, 380, 220, true, true); }).isEnabled = isGraphEnabled;
 	this.addAction('print...', function() { ui.showDialog(new PrintDialog(ui).container, 300, 180, true, true); }, null, 'sprite-print', 'Ctrl+P');
 	this.addAction('preview', function() { mxUtils.show(graph, null, 10, 10); });
 
@@ -906,6 +967,11 @@ Actions.prototype.init = function()
 	action.isEnabled = isGraphEnabled;
 	action.visible = false;
 
+	// add event autosave
+	action.addListener('autosaveChanged',function(){
+		//savemxGraph();
+	});
+/*
 	// Help actions
 	this.addAction('help', function()
 	{
@@ -918,6 +984,7 @@ Actions.prototype.init = function()
 
 		window.open(RESOURCES_PATH + '/help' + ext + '.html');
 	});
+*/
 	this.put('about', new Action(mxResources.get('about') + ' Graph Editor...', function()
 	{
 		ui.showDialog(new AboutDialog(ui).container, 320, 280, true, true);
@@ -1303,7 +1370,8 @@ Actions.prototype.init = function()
 		}
 	}).isEnabled = isGraphEnabled;
 
-	this.addAction('insertImage...', function(image)
+	//this.addAction('insertImage...', function(image)
+	this.addAction('image...', function(image)
 	{
 		if (graph.isEnabled() && !graph.isCellLocked(graph.getDefaultParent()))
 		{

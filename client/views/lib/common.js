@@ -72,7 +72,7 @@ mxLanguage = mxg.mxLanguage;
 mxCodec = mxg.mxCodec;
 mxDragSource = mxg.mxDragSource;
 mxUndoManager = mxg.mxUndoManager;
-mxEventObject = mxg. mxEventObject;
+mxEventObject = mxg.mxEventObject;
 mxLayoutManager = mxg.mxLayoutManager;
 mxDictionary = mxg.mxDictionary;
 mxCell = mxg.mxCell;
@@ -105,8 +105,7 @@ mxMorphing = mxg.mxMorphing ;
 mxFastOrganicLayout = mxg.mxFastOrganicLayout;
 mxCompactTreeLayout = mxg.mxCompactTreeLayout;
 
-mxg.mxResources.add('public/mxgraph/resourcers/editor');
-
+//mxg.mxResources.add('public/mxgraph/resourcers/editor');
 urlParams = (function(url) {
   var result = new Object();
   var idx = url.lastIndexOf('?');
@@ -119,10 +118,27 @@ urlParams = (function(url) {
 
       if (idx > 0) {
         result[params[i].substring(0, idx)] = params[i].substring(idx + 1);
-        console.log("urlparams="+params[i].substring(idx + 1));
+      //  console.log("urlparams="+params[i].substring(idx + 1));
       }
     }
   }
 
   return result;
 })(window.location.href);
+
+
+vertexStyleDefault = new Object();
+  vertexStyleDefault[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
+  vertexStyleDefault[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
+  vertexStyleDefault[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+  vertexStyleDefault[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+  //vertexStyleDefault[mxConstants.STYLE_GRADIENTCOLOR] = '#41B9F5';
+  vertexStyleDefault[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
+  vertexStyleDefault[mxConstants.STYLE_STROKECOLOR] = '#526273';
+  vertexStyleDefault[mxConstants.STYLE_FONTCOLOR] = '#000000';
+  vertexStyleDefault[mxConstants.STYLE_ROUNDED] = false;
+  vertexStyleDefault[mxConstants.STYLE_OPACITY] = '80';
+  vertexStyleDefault[mxConstants.STYLE_FONTSIZE] = '12';
+  vertexStyleDefault[mxConstants.STYLE_FONTSTYLE] = 0;
+  vertexStyleDefault[mxConstants.STYLE_IMAGE_WIDTH] = '48';
+  vertexStyleDefault[mxConstants.STYLE_IMAGE_HEIGHT] = '48';

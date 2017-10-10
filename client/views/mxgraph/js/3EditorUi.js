@@ -14,13 +14,21 @@ EditorUi = function(editor, container, lightbox)
 
 	// check query params
 	// no draw permitted without correct ID
-	if (!Router.current().params.query.id){
-		this.showDialog(new noDrawDialog(ui,'DRAW NOT PERMITTED').container, 320, 280, false, false);
+	var idgraph = Session.get('idgraph');
+	if (!idgraph){
+		this.showDialog(new noDrawDialog(ui,'DRAW NOT PERMITTED..').container, 320, 280, false, false);
+
+		Meteor.setTimeout(function(){
+				window.parent.postMessage("Close Iframe","*");
+		},2500);
 		return false;
 	}
 
 	var graph = this.editor.graph;
 	graph.lightbox = lightbox;
+
+	// default vertex style of the graph
+	graph.getStylesheet().putDefaultVertexStyle(vertexStyleDefault);
 
 	// Pre-fetches submenu image or replaces with embedded image if supported
 	if (mxClient.IS_SVG)
@@ -886,10 +894,19 @@ EditorUi = function(editor, container, lightbox)
 	this.editor.resetGraph();
 	this.init();
 
+
+/*
 	// Load a graph from FSCollections
 	xml = new FS.File();
-	xml = MXGImages.findOne({_id: Router.current().params.query.id});
+	xml = MXGImages.findOne({_id: Session.get('idgraph')});
+	//console.log('idgraph==='+idgraph,xml);
+	//xml = MXGImages.findOne({_id: idgraph});
 	if(xml){
+		var image = null;
+		if(xml.backgroundImage){
+			image = new mxg.mxImage(xml.backgroundImage.src,xml.backgroundImage.w,xml.backgroundImage.h);
+		}
+
 		this.editor.graph.model.beginUpdate();
 		try{
 			this.editor.setGraphXml(mxUtils.parseXml(xml.xml).documentElement);
@@ -897,11 +914,32 @@ EditorUi = function(editor, container, lightbox)
 			mxUtils.alert(mxResources.get('invalidOrMissingFile') + ': ' + e.message);
 		} finally {
 			this.editor.graph.model.endUpdate();
+			this.setBackgroundImage(image);
 		}
 	}
+*/
 	this.editor.setModified(false);
-
 	this.open();
+
+	// add exit button on top-menu
+	if(this.menubar){
+		//console.log("load exit button");
+		var geExit = document.createElement('a');
+		geExit.className = 'geItem geExit';
+		geExit.style.float = 'right';
+		geExit.style.marginRight = '14px';
+		geExit.style.zIndex = '1';
+		var imgExit = document.createElement('img');
+		imgExit.style.border = '0';
+		imgExit.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJAQMAAADaX5RTAAAABlBMVEV7mr3///+wksspAAAAAnRSTlP/AOW3MEoAAAAdSURBVAgdY9jXwCDDwNDRwHCwgeExmASygSL7GgB12QiqNHZZIwAAAABJRU5ErkJggg==';
+		imgExit.title = 'Exit & Save';
+		geExit.appendChild(imgExit);
+		this.menubar.container.appendChild(geExit);
+		mxEvent.addListener(geExit,'click',function(){
+//			savemxGraph();
+			saveAction();
+		});
+	}
 };
 
 // Extends mxEventSource
@@ -1015,6 +1053,42 @@ EditorUi.prototype.init = function()
 				sel.addRange(range);
 			}
 		}
+	}));
+
+	// DragandDrop image on graph container
+	var dropArea = null;
+	mxEvent.addListener(graph.container, 'dragover', mxUtils.bind(this, function(e)
+	{
+		if(dropArea == null && (!mxClient.IS_IE || document.documentMode > 10))
+		{
+			dropArea = this.highlightContainer(graph.container);
+		}
+		e.preventDefault();
+	}));
+
+	mxEvent.addListener(graph.container, 'drop', mxUtils.bind(this, function(e)
+	{
+		if (dropArea != null){
+			dropArea.parentNode.removeChild(dropArea);
+			dropArea = null;
+		}
+		var pt = mxUtils.convertPoint(graph.container, mxEvent.getClientX(e), mxEvent.getClientY(e));
+		var tr = graph.view.translate;
+		var scale = graph.view.scale;
+		var x = pt.x / scale - tr.x;
+		var y = pt.y / scale - tr.y;
+
+		if (mxEvent.isAltDown(e))
+		{
+			x = 0;
+			y = 0;
+		}
+		var dt = e.dataTransfer;
+  	var files = dt.files;
+
+		this.handleFiles(files,x,y);
+		e.stopPropagation();
+		e.preventDefault();
 	}));
 
 	// Updates action states
@@ -3383,6 +3457,19 @@ EditorUi.prototype.showBackgroundImageDialog = function(apply)
 	{
 		this.setBackgroundImage(image);
 	});
+	var dlg = new BackgroundImageDialog(this, mxUtils.bind(this, function(image)
+	{
+		apply(image);
+	}));
+	this.showDialog(dlg.container, 360, 200, true, true);
+	dlg.init();
+	return;
+
+
+	apply = (apply != null) ? apply : mxUtils.bind(this, function(image)
+	{
+		this.setBackgroundImage(image);
+	});
 
 	var newValue = mxUtils.prompt(mxResources.get('backgroundImage'), '');
 	if (newValue != null && newValue.length > 0) {
@@ -3921,4 +4008,38 @@ EditorUi.prototype.destroy = function()
 			c[i].parentNode.removeChild(c[i]);
 		}
 	}
+};
+/////////////////////////////////////
+/**
+	 * Defines the maximum size for images.
+*/
+EditorUi.prototype.maxBackgroundSize = 1600;
+
+/**
+ * Defines the maximum size for images.
+ */
+EditorUi.prototype.maxImageSize = 520;
+
+/**
+ * Images above 200K should be resampled.
+ */
+EditorUi.prototype.resampleThreshold = 200000;
+
+/**
+ * Maximum allowed size for images is 2 MB.
+ */
+EditorUi.prototype.maxImageBytes = 2000000;
+
+/**
+ * Maximum size for background images is 3.5 MB.
+ */
+EditorUi.prototype.maxBackgroundBytes = 3500000;
+/**
+	* Display Message on screen
+	*/
+EditorUi.prototype.showError = function(title, msg, btn, fn)
+{
+	var dlg = new ErrorDialog(this, title, msg, btn, fn);
+	this.showDialog(dlg.container, 340, 150, true, false);
+	dlg.init();
 };

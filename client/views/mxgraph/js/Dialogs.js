@@ -421,7 +421,7 @@ ColorDialog.prototype.createApplyFunction = function()
 		try
 		{
 			graph.setCellStyles(this.currentColorKey, color);
-			this.editorUi.fireEvent(new mxg.mxg.mxEventObject('styleChanged', 'keys', [this.currentColorKey],
+			this.editorUi.fireEvent(new mxg.mxEventObject('styleChanged', 'keys', [this.currentColorKey],
 				'values', [color], 'cells', graph.getSelectionCells()));
 		}
 		finally
@@ -631,12 +631,9 @@ PageSetupDialog = function(editorUi)
 			changeImageLink.innerHTML = newBackgroundImage.src.substring(0, 42) + '...';
 		}
 	};
-
 	mxEvent.addListener(changeImageLink, 'click', function(evt)
 	{
-		BackgroundImageDialog(editorUi,applyFn);
-		return;
-		
+		// dialog backGroundImage
 		editorUi.showBackgroundImageDialog(function(image)
 		{
 			newBackgroundImage = image;

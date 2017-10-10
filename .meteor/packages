@@ -17,7 +17,6 @@ es5-shim@4.6.15                # ECMAScript 5 compatibility for older browsers.
 ecmascript@0.8.0              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.2.3            # Server-side component of the `meteor shell` command
 
-iron:router
 sacha:spin
 session@1.1.7
 cfs:gridfs
@@ -27,3 +26,14 @@ cfs:access-point
 cfs:ui
 dynamic-import
 cfs:data-man
+kadira:flow-router
+kadira:blaze-layout
+exentriq:sso
+jquery
+tap:i18n@1.8.2
+underscore@1.0.10
+underscorestring:underscore.string@3.3.4
+check
+http@1.2.12
+exentriq:guardian-connector
+coffeescript@1.12.3_1

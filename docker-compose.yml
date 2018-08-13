@@ -1,0 +1,15 @@
+graph:
+  container_name: graph
+  restart: always
+  image: exentriq/graph:latest
+  net: bridge
+  ports:
+    - "5139:80"
+  volumes:
+    - /opt/emafiles/file-uploads:/images
+  env_file:
+    - ./settings.env
+  environment:
+    - PORT=80
+  external_links:
+    - mongodb:mongodb

@@ -1,0 +1,16 @@
+{
+  "public": {
+    "defaultRedirectPath": "https://stage.exentriq.com",
+    "loginFormPath": "https://stage.exentriq.com/signin_new"
+  },
+  "private": {
+    "integrationBusPath": "http://bus.stage.exentriq.com:1880",
+    "integrationBusPathSync": "http://bus.stage.exentriq.com:1880/api/object",
+    "integrationBusEventPath": "http://bus.stage.exentriq.com:1880/createEvent",
+    "invitationPath": "http://bus.stage.exentriq.com:1880/invitation",
+    "loginEndpoint": "http://stage.exentriq.com/JSON-RPC",
+    "integrationBusSetIosTokenPath": "http://bus.stage.exentriq.com:1880/setIosToken",
+    "integrationBusSetAndroidTokenPath": "http://bus.stage.exentriq.com:1880/setAndroidToken"
+  }
+}
+

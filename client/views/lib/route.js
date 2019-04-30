@@ -1,16 +1,18 @@
+import { ExSSO } from 'meteor/exentriq:sso';
+
 itemSubscription=null;
 BlazeLayout.setRoot('body');
 
 
-FlowRouter.notFound = {
-    // Subscriptions registered here don't have Fast Render support.
-    action: function() {
-      BlazeLayout.render("layout",{ main: "notFoundTemplate" });
-      Meteor.setTimeout(function(){
-        window.parent.postMessage("Close Iframe","*");
-      },5000);
-    }
-}
+// FlowRouter.notFound = {
+//     // Subscriptions registered here don't have Fast Render support.
+//     action: function() { 
+//       BlazeLayout.render("layout",{ main: "notFoundTemplate" });
+//       Meteor.setTimeout(function(){
+//         window.parent.postMessage("Close Iframe","*");
+//       },5000);
+//     }
+// }
 
 FlowRouter.onRouteRegister(function(route) {
   // do anything with the route object

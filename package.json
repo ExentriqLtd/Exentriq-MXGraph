@@ -9,7 +9,7 @@
     "base64-img": "^1.0.3",
     "jquery": "^3.2.1",
     "meteor-node-stubs": "~0.4.1",
-    "mxgraph": "3.7.1",
+    "mxgraph": "3.9.12",
     "postcss-load-config": "^1.2.0",
     "autoprefixer": "^6.5.1"
   },
@@ -21,6 +21,6 @@
     "grunt-webpack": "2.0.1",
     "load-grunt-parent-tasks": "0.1.1",
     "load-grunt-tasks": "3.5.2",
-    "webpack": "2.2.1"
+    "webpack": "5.74.0"
   }
 }

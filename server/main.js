@@ -21,25 +21,35 @@ Meteor.methods({
     fileObj._id = idgraph;
     fileObj.xml = xmldata;
     fileObj.backgroundImage = svg;
-    fileObj.attachData(imageBuffer, {type: 'image/png'}, function(error){
-        if(error) throw error;
-        fileObj.name(idgraph + '.png');
-        if( MXGImages.find({_id:idgraph}).count() > 0){
-          MXGImages.remove({_id:idgraph},(err)=>{
-            if(!err){
+    return new Promise((resolve, reject) => {
+        fileObj.attachData(imageBuffer, {type: 'image/png'}, function(error){
+            if(error) throw error;
+            fileObj.name(idgraph + '.png');
+            if( MXGImages.find({_id:idgraph}).count() > 0){
+              MXGImages.remove({_id:idgraph},(err)=>{
+                if(!err){
+                  MXGImages.insert(fileObj,(err)=>{
+                    if(err) {
+                      console.log("Error in saving file = "+  err);
+                        reject();
+                    } else {
+                        resolve();
+                    }
+                  });
+                }
+              });
+            } else {
               MXGImages.insert(fileObj,(err)=>{
-                if(err)
-                  console.log("Error in saving file = "+  err);
+                  if(err) {
+                      console.log("Error in saving file = "+  err);
+                      reject();
+                  } else {
+                      resolve();
+                  }
               });
             }
-          });
-        } else {
-          MXGImages.insert(fileObj,(err)=>{
-            if(err)
-              console.log("Error in saving file = "+  err);
-          });
-        }
-    });
+        });
+    })
   } // end of mxgSaveXML
 
 

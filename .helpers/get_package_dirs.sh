@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 function join { local IFS="$1"; shift; echo "$*"; }
 
-packages=("Exentriq-MSP/packages/");
+packages=("meteor-easy-search/packages/" "Exentriq-MSP/packages/" "meteor-streamer/packages" "jalik-ufs/packages" "exentriq-packages/");
 packagesAbs=()
 for f in ${packages[@]}; do
     packagesAbs+=("$PWD/../$f")
@@ -10,5 +10,5 @@ for f in ${packages[@]}; do
         exit
     fi
 done
-PACKAGE_DIRS=$(join : ${packagesAbs[@]});
-echo $PACKAGE_DIRS
+METEOR_PACKAGE_DIRS=$(join : ${packagesAbs[@]});
+echo $METEOR_PACKAGE_DIRS

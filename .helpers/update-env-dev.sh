@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export NODE_TLS_REJECT_UNAUTHORIZED=0;
 rm settings.env
 touch settings.env
 cat >./settings.env << EOL

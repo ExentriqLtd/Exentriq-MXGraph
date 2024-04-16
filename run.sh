@@ -29,4 +29,5 @@ export METEOR_PACKAGE_DIRS=$(join $divider ${packagesAbs[@]});
 export ROOT_URL="http://localhost:3000";
 export MONGO_URL="mongodb://localhost:27017/ema-boards";
 
-meteor --settings settings-stage.json -p 3000
+meteor --settings settings-stage.json -p 300
+#meteor update --release 1.10.1

@@ -3,7 +3,7 @@ TAG    := $(shell git log -1 --pretty=%h)
 IMG    := ${NAME}:${TAG}
 LATEST := ${NAME}:latest
 #TMPDIR := $(shell mktemp -d /tmp/meteor.ema.XXXXXXX)
-NODE_VERSION := ${shell meteor node -v}
+NODE_VERSION := v12.16.1
 NVM_DIR := ${HOME}/.nvm
 METEOR_PACKAGE_DIRS := $(shell .helpers/get_package_dirs.sh)
 

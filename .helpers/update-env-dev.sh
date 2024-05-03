@@ -7,5 +7,5 @@ PORT=80
 METEOR_SETTINGS=$(cat settings-dev.json | awk '{print}' ORS='')
 MONGO_OPLOG_URL=mongodb://mongodb:27017/local?replicaSet=rs0
 MONGO_URL=mongodb://mongodb:27017/mxgraph?replicaSet=rs0
-ROOT_URL=https://mxgraph-stage.exentriq.com
+ROOT_URL=https://mxgraph.exentriq-dev.com
 EOL

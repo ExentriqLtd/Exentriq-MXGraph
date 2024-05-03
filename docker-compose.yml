@@ -2,9 +2,9 @@ graph:
   container_name: graph
   restart: always
   image: exentriq/graph:latest
-  net: bridge
+  net: mynet
   ports:
-    - "5139:80"
+    - "127.0.0.1:5139:80"
   volumes:
     - /opt/emafiles/file-uploads:/images
   env_file:

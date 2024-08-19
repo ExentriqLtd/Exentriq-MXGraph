@@ -8,10 +8,10 @@ NVM_DIR := ${HOME}/.nvm
 METEOR_PACKAGE_DIRS := $(shell .helpers/get_package_dirs.sh)
 
 build:
+	NODE_TLS_REJECT_UNAUTHORIZED=0;
 	[ -s "${NVM_DIR}/nvm.sh" ] && . "${NVM_DIR}/nvm.sh" && nvm install ${NODE_VERSION} && nvm use ${NODE_VERSION}; \
 	npm install --production; \
 	rm -rf .build; \
-	NODE_TLS_REJECT_UNAUTHORIZED=0;
 	METEOR_PACKAGE_DIRS=${METEOR_PACKAGE_DIRS} meteor build --directory ./.build --architecture os.linux.x86_64 --allow-superuser;
 	docker build -t ${IMG} .
 	docker tag ${IMG} ${LATEST}

@@ -8,7 +8,7 @@ fi
 
 function join { local IFS="$1"; shift; echo "$*"; }
 
-packages=("meteor-easy-search/packages/" "Exentriq-MSP/packages/" "meteor-streamer/packages" "jalik-ufs/packages" "exentriq-packages/" "Meteor-CollectionFS/packages");
+packages=("meteor-easy-search/packages/" "Exentriq-MSP/packages/" "meteor-streamer/packages" "exentriq-packages/");
 packagesAbs=()
 for f in ${packages[@]}; do
     packagesAbs+=("$PWD/../$f")

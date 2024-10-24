@@ -80,7 +80,7 @@ pipeline {
                         METEOR_SETTINGS=\$(cat ./meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')
                         export METEOR_SETTINGS='\$METEOR_SETTINGS'
 
-                        docker compose -f compose.server.yml build $serviceName --no-cache
+                        docker compose -f compose.server.yml build ema --no-cache
                     """
                 }
             }

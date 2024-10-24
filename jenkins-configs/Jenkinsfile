@@ -73,7 +73,7 @@ pipeline {
         stage('Build image') {
             steps {
                 dir(StarterRepoFolderName) {
-                    sh "ROOT_URL=https://mxgraph-dev.exentriq.com"
+                    sh "export ROOT_URL=https://mxgraph-dev.exentriq.com"
                     sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose -f compose.server.yml build $serviceName --no-cache"
                 }
             }

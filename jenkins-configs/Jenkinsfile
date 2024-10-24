@@ -74,12 +74,11 @@ pipeline {
             steps {
                 dir(StarterRepoFolderName) {
                     sh """
-                        BUILD_TARGET=build-final
-                        TAG=$DOCKER_TAG
-                        ROOT_URL=https://mxgraph-dev.exentriq.com
-                        METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')'
+                        export BUILD_TARGET=build-final
+                        export ROOT_URL=https://mxgraph-dev.exentriq.com
+                        export METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')'
 
-                        BUILD_TARGET=$BUILD_TARGET TAG=$TAG ROOT_URL=$ROOT_URL METEOR_SETTINGS="$METEOR_SETTINGS" docker compose -f compose.server.yml build $serviceName --no-cache
+                        BUILD_TARGET=$BUILD_TARGET TAG=$DOCKER_TAG ROOT_URL=$ROOT_URL METEOR_SETTINGS="$METEOR_SETTINGS" docker compose -f compose.server.yml build $serviceName --no-cache
                     """
                 }
             }

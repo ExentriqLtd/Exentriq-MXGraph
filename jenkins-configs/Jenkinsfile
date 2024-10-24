@@ -73,8 +73,9 @@ pipeline {
         stage('Build image') {
             steps {
                 dir(StarterRepoFolderName) {
-                    sh "export ROOT_URL=https://mxgraph-dev.exentriq.com"
-                    sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose -f compose.server.yml build $serviceName --no-cache"
+                    sh """
+                        BUILD_TARGET=build-final TAG=$DOCKER_TAG ROOT_URL=https://mxgraph-dev.exentriq.com METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')' docker compose -f compose.server.yml build $serviceName --no-cache
+                    """
                 }
             }
         }

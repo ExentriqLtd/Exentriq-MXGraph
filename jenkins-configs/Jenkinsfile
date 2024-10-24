@@ -78,11 +78,13 @@ pipeline {
                         TAG=$DOCKER_TAG
                         ROOT_URL=https://mxgraph-dev.exentriq.com
                         METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')'
-                        BUILD_TARGET=$BUILD_TARGET TAG=$TAG ROOT_URL=$ROOT_URL METEOR_SETTINGS=$METEOR_SETTINGS docker compose -f compose.server.yml build $serviceName --no-cache
+
+                        BUILD_TARGET=$BUILD_TARGET TAG=$TAG ROOT_URL=$ROOT_URL METEOR_SETTINGS="$METEOR_SETTINGS" docker compose -f compose.server.yml build $serviceName --no-cache
                     """
                 }
             }
         }
+
 
         stage('Push to Docker Registry') {
             steps {

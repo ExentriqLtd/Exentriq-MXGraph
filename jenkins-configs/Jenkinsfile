@@ -73,8 +73,7 @@ pipeline {
         stage('Build image') {
             steps {
                 dir(StarterRepoFolderName) {
-                    sh "cat compose.server.yml"
-                    sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose build $serviceName --no-cache"
+                    sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose -f compose.server.yml build $serviceName --no-cache"
                 }
             }
         }

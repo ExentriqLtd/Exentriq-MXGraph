@@ -2,13 +2,13 @@
 osName=$(uname -s | tr "[:lower:]" "[:upper:]")
 divider=":"
 # if OS is Windows
-if [[ $osName == "CYGWIN" || $osName == "MINGW" || $osName == "MINGW32" || $osName == "MSYS" ]]; then
+if [ $osName == "CYGWIN" ] || [ $osName == "MINGW" ] || [ $osName == "MINGW32" ] || [ $osName == "MSYS" ]; then
   divider=";"
 fi
 
 function join { local IFS="$1"; shift; echo "$*"; }
 
-packages=("meteor-easy-search/packages/" "Exentriq-MSP/packages/" "meteor-streamer/packages" "exentriq-packages/");
+packages=("Exentriq-MSP/packages/");
 packagesAbs=()
 for f in ${packages[@]}; do
     packagesAbs+=("$PWD/../$f")
@@ -19,3 +19,5 @@ for f in ${packages[@]}; do
 done
 METEOR_PACKAGE_DIRS=$(join $divider ${packagesAbs[@]});
 echo $METEOR_PACKAGE_DIRS
+
+export METEOR_PACKAGE_DIRS;

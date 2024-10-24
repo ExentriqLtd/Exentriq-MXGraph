@@ -38,3 +38,5 @@ settings.env
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
+
+run.sh

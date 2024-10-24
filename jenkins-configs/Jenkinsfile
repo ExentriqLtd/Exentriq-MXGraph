@@ -1,0 +1,127 @@
+def StarterRepoFolderName = 'Exentriq-Docker'
+def serviceName = 'mxgraph'
+def defaultBranch = 'dev-server'
+
+def EMAFolderName = 'Exentriq-EMA'
+def MSPFolderName = 'Exentriq-MSP'
+def ROMEOFolderName = 'Exentriq-ROMEO'
+
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = 'registry.exentriq.com:4443'
+        DOCKER_IMAGE = "exentriq/$serviceName"
+        DOCKER_REGISTRY_ID = 'docker-registry'
+        DOCKER_TAG = ''
+    }
+
+    stages {
+        stage('Clean workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Clone root repository') {
+            steps {
+                dir(StarterRepoFolderName) {
+                    git branch: 'main', url: 'git@github.com:ExentriqLtd/Exentriq-Docker.git'
+                }
+            }
+        }
+
+        stage('Clone all repos') {
+            steps {
+                dir(StarterRepoFolderName) {
+                    sh 'echo $SERVER_USER'
+                    sh 'chmod +x scripts/clone-repos.sh'
+                    sh 'scripts/clone-repos.sh'
+                }
+            }
+        }
+
+        stage('Switch branches') {
+            steps {
+                script {
+                    dir(EMAFolderName) {
+                        echo "Change branch in $EMAFolderName"
+                        sh "git switch $defaultBranch"
+                    }
+                    dir(MSPFolderName) {
+                        echo "Change branch in $MSPFolderName"
+                        sh "git switch $defaultBranch"
+                    }
+                    dir(ROMEOFolderName) {
+                        echo "Change branch in $ROMEOFolderName"
+                        sh "git switch $defaultBranch"
+                    }
+                }
+            }
+        }
+
+        stage('Set Docker Tag') {
+            steps {
+                script {
+                    dir(EMAFolderName) {
+                        DOCKER_TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    }
+                }
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                dir(StarterRepoFolderName) {
+                    sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose build $serviceName --no-cache"
+                }
+            }
+        }
+
+        stage('Push to Docker Registry') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "$DOCKER_REGISTRY_ID", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY"
+                        sh "docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_REGISTRY/$DOCKER_IMAGE:$DOCKER_TAG"
+                        sh "docker push $DOCKER_REGISTRY/$DOCKER_IMAGE:$DOCKER_TAG"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy a new docker image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "$DOCKER_REGISTRY_ID", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${env.SERVER_USER}@${env.SERVER_ADDRESS} "
+                                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
+                                docker pull $DOCKER_REGISTRY/$DOCKER_IMAGE:$DOCKER_TAG
+                                docker tag $DOCKER_REGISTRY/$DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE:$DOCKER_TAG
+                                cd ./Exentriq-Docker
+                                git pull
+                                docker compose -f compose.server.yml down $serviceName
+                                TAG=$DOCKER_TAG ROOT_URL=https://mxgraph-dev.exentriq.com METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')' docker compose -f compose.server.yml up $serviceName -d
+                            "
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Clean up Docker Images and Volumes') {
+            steps {
+                script {
+                    sh 'docker system prune --all --volumes --force'
+                }
+            }
+        }
+
+        stage('Clean workspace at the end') {
+            steps {
+                cleanWs()
+            }
+        }
+    }
+}

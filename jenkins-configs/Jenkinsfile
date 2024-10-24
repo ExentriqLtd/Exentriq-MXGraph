@@ -77,7 +77,7 @@ pipeline {
                         export BUILD_TARGET=build-final
                         export ROOT_URL=https://mxgraph-dev.exentriq.com
                         export TAG=$DOCKER_TAG
-                        METEOR_SETTINGS=\$(ls -ln && cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')
+                        METEOR_SETTINGS=\$(cat ./meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')
                         export METEOR_SETTINGS="\$METEOR_SETTINGS"
 
                         docker compose -f compose.server.yml build $serviceName --no-cache

@@ -128,7 +128,7 @@ pipeline {
             }
         }
 
-        stage('Clean workspace at the end') {
+        stage('Clean workspace at the end!') {
             steps {
                 cleanWs()
             }

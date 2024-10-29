@@ -45,16 +45,12 @@ pipeline {
         stage('Switch branches') {
             steps {
                 script {
-                    dir(EMAFolderName) {
-                        echo "Change branch in $EMAFolderName"
+                    dir(MXGraphFolderName) {
+                        echo "Change branch in $MXGraphFolderName"
                         sh "git switch $defaultBranch"
                     }
                     dir(MSPFolderName) {
                         echo "Change branch in $MSPFolderName"
-                        sh "git switch $defaultBranch"
-                    }
-                    dir(ROMEOFolderName) {
-                        echo "Change branch in $ROMEOFolderName"
                         sh "git switch $defaultBranch"
                     }
                 }

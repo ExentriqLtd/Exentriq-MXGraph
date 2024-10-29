@@ -2,6 +2,7 @@ def StarterRepoFolderName = 'Exentriq-Docker'
 def serviceName = 'mxgraph'
 def defaultBranch = 'dev-server'
 
+def MXGraphFolderName = 'Exentriq-MXGraph'
 def EMAFolderName = 'Exentriq-EMA'
 def MSPFolderName = 'Exentriq-MSP'
 def ROMEOFolderName = 'Exentriq-ROMEO'
@@ -63,7 +64,7 @@ pipeline {
         stage('Set Docker Tag') {
             steps {
                 script {
-                    dir(EMAFolderName) {
+                    dir(MXGraphFolderName) {
                         DOCKER_TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
                     }
                 }

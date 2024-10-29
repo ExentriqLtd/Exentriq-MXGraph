@@ -74,7 +74,15 @@ pipeline {
         stage('Build image') {
             steps {
                 dir(StarterRepoFolderName) {
-                    sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose -f compose.server.yml build $serviceName --no-cache"
+                    sh """
+                        export BUILD_TARGET=build-final
+                        export ROOT_URL=https://mxgraph-dev.exentriq.com
+                        export TAG=$DOCKER_TAG
+                        METEOR_SETTINGS=\$(cat ./meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')
+                        export METEOR_SETTINGS='\$METEOR_SETTINGS'
+
+                        docker compose -f compose.yml build $serviceName --no-cache
+                    """
                 }
             }
         }

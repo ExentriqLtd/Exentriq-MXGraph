@@ -4,20 +4,7 @@
     "loginFormPath": "https://www.exentriq.com/signin_new"
   },
   "private": {
-    "integrationBusPath": "http://bus.exentriq.com:1880",
-    "integrationBusEventPath": "http://bus.exentriq.com:1880/createEvent",
-    "integrationBusPathSync": "http://bus.exentriq.com:1880/api/object",
-    "invitationPath": "http://bus.exentriq.com:1880/invitation",
-    "loginEndpoint": "https://www.exentriq.com/JSON-RPC",
-    "integrationBusRemoveIosTokenPath": "http://bus.exentriq.com:1880/removeIosToken",
-    "integrationBusSetIosTokenPath": "http://bus.exentriq.com:1880/setIosToken",
-    "integrationBusSetAndroidTokenPath": "http://bus.exentriq.com:1880/setAndroidToken",
-    "kadiraEx": {
-      "use": true,
-      "appId": "9tgcDvydj5HfLg9Z9",
-      "appSecret": "4583228f-1e4e-47c5-85ca-e0a06c024568",
-      "url": "https://kadira-engine.exentriq.com"
-    }
+    "loginEndpoint": "https://www.exentriq.com/JSON-RPC"
   }
 }
 

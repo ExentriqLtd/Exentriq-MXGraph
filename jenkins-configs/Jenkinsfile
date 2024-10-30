@@ -70,15 +70,8 @@ pipeline {
         stage('Build image') {
             steps {
                 dir(StarterRepoFolderName) {
-                    sh """
-                        export BUILD_TARGET=build-final
-                        export ROOT_URL=$ROOT_URL
-                        export TAG=$DOCKER_TAG
-                        METEOR_SETTINGS=\$(cat ./meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')
-                        export METEOR_SETTINGS='\$METEOR_SETTINGS'
+                    sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose -f compose.yml build $serviceName --no-cache"
 
-                        docker compose -f compose.yml build $serviceName --no-cache
-                    """
                 }
             }
         }

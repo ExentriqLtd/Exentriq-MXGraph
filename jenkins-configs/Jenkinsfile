@@ -15,6 +15,7 @@ pipeline {
         DOCKER_IMAGE = "exentriq/$serviceName"
         DOCKER_REGISTRY_ID = 'docker-registry'
         DOCKER_TAG = ''
+        ROOT_URL = 'https://mxgraph-dev.exentriq.com'
     }
 
     stages {
@@ -35,7 +36,6 @@ pipeline {
         stage('Clone all repos') {
             steps {
                 dir(StarterRepoFolderName) {
-                    sh 'echo $SERVER_USER'
                     sh 'chmod +x scripts/clone-repos.sh'
                     sh 'scripts/clone-repos.sh'
                 }
@@ -70,15 +70,8 @@ pipeline {
         stage('Build image') {
             steps {
                 dir(StarterRepoFolderName) {
-                    sh """
-                        export BUILD_TARGET=build-final
-                        export ROOT_URL=https://mxgraph-dev.exentriq.com
-                        export TAG=$DOCKER_TAG
-                        METEOR_SETTINGS=\$(cat ./meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')
-                        export METEOR_SETTINGS='\$METEOR_SETTINGS'
+                    sh "BUILD_TARGET=build-final TAG=$DOCKER_TAG docker compose -f compose.yml build $serviceName --no-cache"
 
-                        docker compose -f compose.yml build $serviceName --no-cache
-                    """
                 }
             }
         }
@@ -108,7 +101,7 @@ pipeline {
                                 cd ./Exentriq-Docker
                                 git pull
                                 docker compose -f compose.server.yml down $serviceName
-                                TAG=$DOCKER_TAG ROOT_URL=https://mxgraph-dev.exentriq.com METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')' docker compose -f compose.server.yml up $serviceName -d
+                                TAG=$DOCKER_TAG ROOT_URL=$ROOT_URL METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')' docker compose -f compose.server.yml up $serviceName -d
                             "
                         """
                     }

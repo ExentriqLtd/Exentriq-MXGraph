@@ -100,7 +100,7 @@ pipeline {
                                 cd ./Exentriq-Docker
                                 git pull
                                 docker compose -f compose.server.yml down $serviceName
-                                TAG=$DOCKER_TAG ROOT_URL=$ROOT_URL METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')' docker compose -f compose.server.yml up $serviceName -d
+                                ENV=${env.ENV} TAG=$DOCKER_TAG ROOT_URL=$ROOT_URL METEOR_SETTINGS='\$(cat ./Exentriq-Docker/meteor-settings/$serviceName/settings-dev.json | tr -d '\\n' | sed 's/"/\\"/g')' docker compose -f compose.server.yml up $serviceName -d
                             "
                         """
                     }

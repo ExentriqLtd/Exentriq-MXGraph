@@ -61,7 +61,7 @@ pipeline {
             steps {
                 script {
                     dir(MXGraphFolderName) {
-                        DOCKER_TAG = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                        DOCKER_TAG = defaultBranch
                     }
                 }
             }
